@@ -1,0 +1,522 @@
+msgid ""
+msgstr ""
+
+msgctxt "#30000"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Recently Watched"
+msgstr ""
+
+msgctxt "#30002"
+msgid "TV Series"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Movies"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Variety Shows"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Anime"
+msgstr ""
+
+msgctxt "#30006"
+msgid "First"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Previous"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Next"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Last"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Remove"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Clear"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Video Not Found"
+msgstr ""
+
+msgctxt "#30013"
+msgid "Drama Type"
+msgstr ""
+
+msgctxt "#30014"
+msgid "All"
+msgstr ""
+
+msgctxt "#30015"
+msgid "Chinese Drama"
+msgstr ""
+
+msgctxt "#30016"
+msgid "Japanese And Korean Drama"
+msgstr ""
+
+msgctxt "#30017"
+msgid "British And American Drama"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Taiwan And Thai Drama"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Hong Kong Drama"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Genre"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Suspense"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Wu Xia"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Science Fiction"
+msgstr ""
+
+msgctxt "#30024"
+msgid "City"
+msgstr ""
+
+msgctxt "#30025"
+msgid "Romance"
+msgstr ""
+
+msgctxt "#30026"
+msgid "Ancient"
+msgstr ""
+
+msgctxt "#30027"
+msgid "War"
+msgstr ""
+
+msgctxt "#30028"
+msgid "Youth"
+msgstr ""
+
+msgctxt "#30029"
+msgid "Idol"
+msgstr ""
+
+msgctxt "#30030"
+msgid "Comedy"
+msgstr ""
+
+msgctxt "#30031"
+msgid "Family"
+msgstr ""
+
+msgctxt "#30032"
+msgid "Crime"
+msgstr ""
+
+msgctxt "#30033"
+msgid "Fantasy"
+msgstr ""
+
+msgctxt "#30034"
+msgid "Rural Area"
+msgstr ""
+
+msgctxt "#30035"
+msgid "Period"
+msgstr ""
+
+msgctxt "#30036"
+msgid "Police"
+msgstr ""
+
+msgctxt "#30037"
+msgid "Spy"
+msgstr ""
+
+msgctxt "#30038"
+msgid "Adventure"
+msgstr ""
+
+msgctxt "#30039"
+msgid "Criminal"
+msgstr ""
+
+msgctxt "#30040"
+msgid "Royal Court"
+msgstr ""
+
+msgctxt "#30041"
+msgid "Magic"
+msgstr ""
+
+msgctxt "#30042"
+msgid "Country"
+msgstr ""
+
+msgctxt "#30043"
+msgid "Mainland China"
+msgstr ""
+
+msgctxt "#30044"
+msgid "Korea"
+msgstr ""
+
+msgctxt "#30045"
+msgid "Hong Kong"
+msgstr ""
+
+msgctxt "#30046"
+msgid "Taiwan"
+msgstr ""
+
+msgctxt "#30047"
+msgid "United States"
+msgstr ""
+
+msgctxt "#30048"
+msgid "United Kingdom"
+msgstr ""
+
+msgctxt "#30049"
+msgid "Brazil"
+msgstr ""
+
+msgctxt "#30050"
+msgid "Spain"
+msgstr ""
+
+msgctxt "#30051"
+msgid "Thailand"
+msgstr ""
+
+msgctxt "#30052"
+msgid "Germany"
+msgstr ""
+
+msgctxt "#30053"
+msgid "France"
+msgstr ""
+
+msgctxt "#30054"
+msgid "Japan"
+msgstr ""
+
+msgctxt "#30055"
+msgid "Netherlands"
+msgstr ""
+
+msgctxt "#30056"
+msgid "Denmark"
+msgstr ""
+
+msgctxt "#30057"
+msgid "Year"
+msgstr ""
+
+msgctxt "#30058"
+msgid "Language"
+msgstr ""
+
+msgctxt "#30059"
+msgid "Mandarin"
+msgstr ""
+
+msgctxt "#30060"
+msgid "English"
+msgstr ""
+
+msgctxt "#30061"
+msgid "Cantonese"
+msgstr ""
+
+msgctxt "#30062"
+msgid "Korean"
+msgstr ""
+
+msgctxt "#30063"
+msgid "Spanish"
+msgstr ""
+
+msgctxt "#30064"
+msgid "Portuguese"
+msgstr ""
+
+msgctxt "#30065"
+msgid "Thai"
+msgstr ""
+
+msgctxt "#30066"
+msgid "German"
+msgstr ""
+
+msgctxt "#30067"
+msgid "French"
+msgstr ""
+
+msgctxt "#30068"
+msgid "Japanese"
+msgstr ""
+
+msgctxt "#30069"
+msgid "Dutch"
+msgstr ""
+
+msgctxt "#30070"
+msgid "Norwegian"
+msgstr ""
+
+msgctxt "#30071"
+msgid "Alphabet"
+msgstr ""
+
+msgctxt "#30072"
+msgid "Sort"
+msgstr ""
+
+msgctxt "#30073"
+msgid "Time"
+msgstr ""
+
+msgctxt "#30074"
+msgid "Popularity"
+msgstr ""
+
+msgctxt "#30075"
+msgid "Score"
+msgstr ""
+
+msgctxt "#30076"
+msgid "Story"
+msgstr ""
+
+msgctxt "#30077"
+msgid "Horror"
+msgstr ""
+
+msgctxt "#30078"
+msgid "Action"
+msgstr ""
+
+msgctxt "#30079"
+msgid "Animation"
+msgstr ""
+
+msgctxt "#30080"
+msgid "Gun Battle"
+msgstr ""
+
+msgctxt "#30081"
+msgid "Thriller"
+msgstr ""
+
+msgctxt "#30082"
+msgid "Literature And Art"
+msgstr ""
+
+msgctxt "#30083"
+msgid "Documentary"
+msgstr ""
+
+msgctxt "#30084"
+msgid "Musical"
+msgstr ""
+
+msgctxt "#30085"
+msgid "Mainland China"
+msgstr ""
+
+msgctxt "#30086"
+msgid "India"
+msgstr ""
+
+msgctxt "#30087"
+msgid "Canada"
+msgstr ""
+
+msgctxt "#30088"
+msgid "Italy"
+msgstr ""
+
+msgctxt "#30089"
+msgid "Australia"
+msgstr ""
+
+msgctxt "#30090"
+msgid "Russia"
+msgstr ""
+
+msgctxt "#30091"
+msgid "Hindi"
+msgstr ""
+
+msgctxt "#30092"
+msgid "Italian"
+msgstr ""
+
+msgctxt "#30093"
+msgid "Arabic"
+msgstr ""
+
+msgctxt "#30094"
+msgid "Russian"
+msgstr ""
+
+msgctxt "#30095"
+msgid "Reality Show"
+msgstr ""
+
+msgctxt "#30096"
+msgid "Draft"
+msgstr ""
+
+msgctxt "#30097"
+msgid "Competition"
+msgstr ""
+
+msgctxt "#30098"
+msgid "Emotion"
+msgstr ""
+
+msgctxt "#30099"
+msgid "Interview"
+msgstr ""
+
+msgctxt "#30100"
+msgid "News"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Travel"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Music"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Gourmet"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Documentary"
+msgstr ""
+
+msgctxt "#30105"
+msgid "Quyi"
+msgstr ""
+
+msgctxt "#30106"
+msgid "Life"
+msgstr ""
+
+msgctxt "#30107"
+msgid "Game Interaction"
+msgstr ""
+
+msgctxt "#30108"
+msgid "Hong Kong And Taiwan"
+msgstr ""
+
+msgctxt "#30109"
+msgid "Japan And Korea"
+msgstr ""
+
+msgctxt "#30110"
+msgid "Europe And America"
+msgstr ""
+
+msgctxt "#30111"
+msgid "Southern Min"
+msgstr ""
+
+msgctxt "#30112"
+msgid "Other"
+msgstr ""
+
+msgctxt "#30113"
+msgid "Fantasy"
+msgstr ""
+
+msgctxt "#30114"
+msgid "Hot Blood"
+msgstr ""
+
+msgctxt "#30115"
+msgid "Inference"
+msgstr ""
+
+msgctxt "#30116"
+msgid "Funny"
+msgstr ""
+
+msgctxt "#30117"
+msgid "Lolita"
+msgstr ""
+
+msgctxt "#30118"
+msgid "Campus"
+msgstr ""
+
+msgctxt "#30119"
+msgid "Machine Warfare"
+msgstr ""
+
+msgctxt "#30120"
+msgid "Sport"
+msgstr ""
+
+msgctxt "#30121"
+msgid "Juvenile"
+msgstr ""
+
+msgctxt "#30122"
+msgid "Girl"
+msgstr ""
+
+msgctxt "#30123"
+msgid "Society"
+msgstr ""
+
+msgctxt "#30124"
+msgid "Parent And Child"
+msgstr ""
+
+msgctxt "#30125"
+msgid "Puzzle"
+msgstr ""
+
+msgctxt "#30126"
+msgid "Inspirational"
+msgstr ""
+
+msgctxt "#30127"
+msgid "Other"
+msgstr ""
+
+msgctxt "#30128"
+msgid "China"
+msgstr ""
+
+msgctxt "#30129"
+msgid "Filter"
+msgstr ""

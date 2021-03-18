@@ -1,0 +1,522 @@
+msgid ""
+msgstr ""
+
+msgctxt "#30000"
+msgid "Search"
+msgstr "搜索"
+
+msgctxt "#30001"
+msgid "Recently Watched"
+msgstr "最近看过"
+
+msgctxt "#30002"
+msgid "TV Series"
+msgstr "连续剧"
+
+msgctxt "#30003"
+msgid "Movies"
+msgstr "电影"
+
+msgctxt "#30004"
+msgid "Variety Shows"
+msgstr "综艺"
+
+msgctxt "#30005"
+msgid "Anime"
+msgstr "动漫"
+
+msgctxt "#30006"
+msgid "First"
+msgstr "首页"
+
+msgctxt "#30007"
+msgid "Previous"
+msgstr "上一页"
+
+msgctxt "#30008"
+msgid "Next"
+msgstr "下一页"
+
+msgctxt "#30009"
+msgid "Last"
+msgstr "尾页"
+
+msgctxt "#30010"
+msgid "Remove"
+msgstr "移除"
+
+msgctxt "#30011"
+msgid "Clear"
+msgstr "清除"
+
+msgctxt "#30012"
+msgid "Video Not Found"
+msgstr "找不到视频"
+
+msgctxt "#30013"
+msgid "Drama Type"
+msgstr "类型"
+
+msgctxt "#30014"
+msgid "All"
+msgstr "全部"
+
+msgctxt "#30015"
+msgid "Chinese Drama"
+msgstr "陆剧"
+
+msgctxt "#30016"
+msgid "Japanese And Korean Drama"
+msgstr "日韩剧"
+
+msgctxt "#30017"
+msgid "British And American Drama"
+msgstr "英美剧"
+
+msgctxt "#30018"
+msgid "Taiwan And Thai Drama"
+msgstr "台泰剧"
+
+msgctxt "#30019"
+msgid "Hong Kong Drama"
+msgstr "港剧"
+
+msgctxt "#30020"
+msgid "Genre"
+msgstr "剧情"
+
+msgctxt "#30021"
+msgid "Suspense"
+msgstr "悬疑"
+
+msgctxt "#30022"
+msgid "Wu Xia"
+msgstr "武侠"
+
+msgctxt "#30023"
+msgid "Science Fiction"
+msgstr "科幻"
+
+msgctxt "#30024"
+msgid "City"
+msgstr "都市"
+
+msgctxt "#30025"
+msgid "Romance"
+msgstr "爱情"
+
+msgctxt "#30026"
+msgid "Ancient"
+msgstr "古装"
+
+msgctxt "#30027"
+msgid "War"
+msgstr "战争"
+
+msgctxt "#30028"
+msgid "Youth"
+msgstr "青春"
+
+msgctxt "#30029"
+msgid "Idol"
+msgstr "偶像"
+
+msgctxt "#30030"
+msgid "Comedy"
+msgstr "喜剧"
+
+msgctxt "#30031"
+msgid "Family"
+msgstr "家庭"
+
+msgctxt "#30032"
+msgid "Crime"
+msgstr "犯罪"
+
+msgctxt "#30033"
+msgid "Fantasy"
+msgstr "奇幻"
+
+msgctxt "#30034"
+msgid "Rural Area"
+msgstr "乡村"
+
+msgctxt "#30035"
+msgid "Period"
+msgstr "年代"
+
+msgctxt "#30036"
+msgid "Police"
+msgstr "警匪"
+
+msgctxt "#30037"
+msgid "Spy"
+msgstr "谍战"
+
+msgctxt "#30038"
+msgid "Adventure"
+msgstr "冒险"
+
+msgctxt "#30039"
+msgid "Criminal"
+msgstr "罪案"
+
+msgctxt "#30040"
+msgid "Royal Court"
+msgstr "宫廷"
+
+msgctxt "#30041"
+msgid "Magic"
+msgstr "魔幻"
+
+msgctxt "#30042"
+msgid "Country"
+msgstr "地区"
+
+msgctxt "#30043"
+msgid "Mainland China"
+msgstr "内地"
+
+msgctxt "#30044"
+msgid "Korea"
+msgstr "韩国"
+
+msgctxt "#30045"
+msgid "Hong Kong"
+msgstr "香港"
+
+msgctxt "#30046"
+msgid "Taiwan"
+msgstr "台湾"
+
+msgctxt "#30047"
+msgid "United States"
+msgstr "美国"
+
+msgctxt "#30048"
+msgid "United Kingdom"
+msgstr "英国"
+
+msgctxt "#30049"
+msgid "Brazil"
+msgstr "巴西"
+
+msgctxt "#30050"
+msgid "Spain"
+msgstr "西班牙"
+
+msgctxt "#30051"
+msgid "Thailand"
+msgstr "泰国"
+
+msgctxt "#30052"
+msgid "Germany"
+msgstr "德国"
+
+msgctxt "#30053"
+msgid "France"
+msgstr "法国"
+
+msgctxt "#30054"
+msgid "Japan"
+msgstr "日本"
+
+msgctxt "#30055"
+msgid "Netherlands"
+msgstr "荷兰"
+
+msgctxt "#30056"
+msgid "Denmark"
+msgstr "丹麦"
+
+msgctxt "#30057"
+msgid "Year"
+msgstr "年份"
+
+msgctxt "#30058"
+msgid "Language"
+msgstr "语言"
+
+msgctxt "#30059"
+msgid "Mandarin"
+msgstr "国语"
+
+msgctxt "#30060"
+msgid "English"
+msgstr "英语"
+
+msgctxt "#30061"
+msgid "Cantonese"
+msgstr "粤语"
+
+msgctxt "#30062"
+msgid "Korean"
+msgstr "韩语"
+
+msgctxt "#30063"
+msgid "Spanish"
+msgstr "西班牙语"
+
+msgctxt "#30064"
+msgid "Portuguese"
+msgstr "葡萄牙语"
+
+msgctxt "#30065"
+msgid "Thai"
+msgstr "泰语"
+
+msgctxt "#30066"
+msgid "German"
+msgstr "德语"
+
+msgctxt "#30067"
+msgid "French"
+msgstr "法语"
+
+msgctxt "#30068"
+msgid "Japanese"
+msgstr "日语"
+
+msgctxt "#30069"
+msgid "Dutch"
+msgstr "荷兰语"
+
+msgctxt "#30070"
+msgid "Norwegian"
+msgstr "挪威语"
+
+msgctxt "#30071"
+msgid "Alphabet"
+msgstr "字母"
+
+msgctxt "#30072"
+msgid "Sort"
+msgstr "排序"
+
+msgctxt "#30073"
+msgid "Time"
+msgstr "时间"
+
+msgctxt "#30074"
+msgid "Popularity"
+msgstr "人气"
+
+msgctxt "#30075"
+msgid "Score"
+msgstr "评分"
+
+msgctxt "#30076"
+msgid "Story"
+msgstr "剧情"
+
+msgctxt "#30077"
+msgid "Horror"
+msgstr "恐怖"
+
+msgctxt "#30078"
+msgid "Action"
+msgstr "动作"
+
+msgctxt "#30079"
+msgid "Animation"
+msgstr "动画"
+
+msgctxt "#30080"
+msgid "Gun Battle"
+msgstr "枪战"
+
+msgctxt "#30081"
+msgid "Thriller"
+msgstr "惊悚"
+
+msgctxt "#30082"
+msgid "Literature And Art"
+msgstr "文艺"
+
+msgctxt "#30083"
+msgid "Documentary"
+msgstr "纪录片"
+
+msgctxt "#30084"
+msgid "Musical"
+msgstr "歌舞"
+
+msgctxt "#30085"
+msgid "Mainland China"
+msgstr "大陆"
+
+msgctxt "#30086"
+msgid "India"
+msgstr "印度"
+
+msgctxt "#30087"
+msgid "Canada"
+msgstr "加拿大"
+
+msgctxt "#30088"
+msgid "Italy"
+msgstr "意大利"
+
+msgctxt "#30089"
+msgid "Australia"
+msgstr "澳大利亚"
+
+msgctxt "#30090"
+msgid "Russia"
+msgstr "俄罗斯"
+
+msgctxt "#30091"
+msgid "Hindi"
+msgstr "印地语"
+
+msgctxt "#30092"
+msgid "Italian"
+msgstr "意大利语"
+
+msgctxt "#30093"
+msgid "Arabic"
+msgstr "阿拉伯语"
+
+msgctxt "#30094"
+msgid "Russian"
+msgstr "俄语"
+
+msgctxt "#30095"
+msgid "Reality Show"
+msgstr "真人秀"
+
+msgctxt "#30096"
+msgid "Draft"
+msgstr "选秀"
+
+msgctxt "#30097"
+msgid "Competition"
+msgstr "竞演"
+
+msgctxt "#30098"
+msgid "Emotion"
+msgstr "情感"
+
+msgctxt "#30099"
+msgid "Interview"
+msgstr "访谈"
+
+msgctxt "#30100"
+msgid "News"
+msgstr "播报"
+
+msgctxt "#30101"
+msgid "Travel"
+msgstr "旅游"
+
+msgctxt "#30102"
+msgid "Music"
+msgstr "音乐"
+
+msgctxt "#30103"
+msgid "Gourmet"
+msgstr "美食"
+
+msgctxt "#30104"
+msgid "Documentary"
+msgstr "纪实"
+
+msgctxt "#30105"
+msgid "Quyi"
+msgstr "曲艺"
+
+msgctxt "#30106"
+msgid "Life"
+msgstr "生活"
+
+msgctxt "#30107"
+msgid "Game Interaction"
+msgstr "游戏互动"
+
+msgctxt "#30108"
+msgid "Hong Kong And Taiwan"
+msgstr "港台"
+
+msgctxt "#30109"
+msgid "Japan And Korea"
+msgstr "日韩"
+
+msgctxt "#30110"
+msgid "Europe And America"
+msgstr "欧美"
+
+msgctxt "#30111"
+msgid "Southern Min"
+msgstr "闽南语"
+
+msgctxt "#30112"
+msgid "Other"
+msgstr "其它"
+
+msgctxt "#30113"
+msgid "Fantasy"
+msgstr "玄幻"
+
+msgctxt "#30114"
+msgid "Hot Blood"
+msgstr "热血"
+
+msgctxt "#30115"
+msgid "Inference"
+msgstr "推理"
+
+msgctxt "#30116"
+msgid "Funny"
+msgstr "搞笑"
+
+msgctxt "#30117"
+msgid "Lolita"
+msgstr "萝莉"
+
+msgctxt "#30118"
+msgid "Campus"
+msgstr "校园"
+
+msgctxt "#30119"
+msgid "Machine Warfare"
+msgstr "机战"
+
+msgctxt "#30120"
+msgid "Sport"
+msgstr "运动"
+
+msgctxt "#30121"
+msgid "Juvenile"
+msgstr "少年"
+
+msgctxt "#30122"
+msgid "Girl"
+msgstr "少女"
+
+msgctxt "#30123"
+msgid "Society"
+msgstr "社会"
+
+msgctxt "#30124"
+msgid "Parent And Child"
+msgstr "亲子"
+
+msgctxt "#30125"
+msgid "Puzzle"
+msgstr "益智"
+
+msgctxt "#30126"
+msgid "Inspirational"
+msgstr "励志"
+
+msgctxt "#30127"
+msgid "Other"
+msgstr "其他"
+
+msgctxt "#30128"
+msgid "China"
+msgstr "国产"
+
+msgctxt "#30129"
+msgid "Filter"
+msgstr "筛选"
