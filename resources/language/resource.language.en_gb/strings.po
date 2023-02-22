@@ -82,7 +82,7 @@ msgid "Hong Kong Drama"
 msgstr ""
 
 msgctxt "#30020"
-msgid "Genre"
+msgid "Plot"
 msgstr ""
 
 msgctxt "#30021"
@@ -298,15 +298,11 @@ msgid "Time"
 msgstr ""
 
 msgctxt "#30074"
-msgid "Popularity"
+msgid "Hits"
 msgstr ""
 
 msgctxt "#30075"
 msgid "Score"
-msgstr ""
-
-msgctxt "#30076"
-msgid "Story"
 msgstr ""
 
 msgctxt "#30077"
@@ -519,4 +515,12 @@ msgstr ""
 
 msgctxt "#30129"
 msgid "Filter"
+msgstr ""
+
+msgctxt "#30130"
+msgid "Skit"
+msgstr ""
+
+msgctxt "#30131"
+msgid "BL"
 msgstr ""

@@ -82,7 +82,7 @@ msgid "Hong Kong Drama"
 msgstr "港剧"
 
 msgctxt "#30020"
-msgid "Genre"
+msgid "Plot"
 msgstr "剧情"
 
 msgctxt "#30021"
@@ -298,16 +298,12 @@ msgid "Time"
 msgstr "时间"
 
 msgctxt "#30074"
-msgid "Popularity"
+msgid "Hits"
 msgstr "人气"
 
 msgctxt "#30075"
 msgid "Score"
 msgstr "评分"
-
-msgctxt "#30076"
-msgid "Story"
-msgstr "剧情"
 
 msgctxt "#30077"
 msgid "Horror"
@@ -520,3 +516,11 @@ msgstr "国产"
 msgctxt "#30129"
 msgid "Filter"
 msgstr "筛选"
+
+msgctxt "#30130"
+msgid "Skit"
+msgstr "短剧"
+
+msgctxt "#30131"
+msgid "BL"
+msgstr "BL"
