@@ -22,13 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from collections import defaultdict
 from json import dumps, loads
 from os import makedirs, path
 
-from peewee import CharField, Model, SmallIntegerField, SQL, SqliteDatabase
-from playhouse.sqlite_ext import DateTimeField
-from xbmcext import ListItem, getAddonPath, getAddonProfilePath, getLanguage
+from peewee import CharField, SqliteDatabase, Model, SQL, SmallIntegerField, DateTimeField
+from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLanguage
 
 if __name__ == '__main__':
     from xbmcgui import ListItem
@@ -36,15 +34,10 @@ if __name__ == '__main__':
 
 class JSONField(CharField):
     def db_value(self, value):
-        if isinstance(value, str):
-            return value
-        else:
-            return dumps(value)
+        return value if isinstance(value, str) else dumps(value, ensure_ascii=False)
 
     def python_value(self, value):
-        value = loads(value)
-        default = value['zh']
-        return defaultdict(lambda: default, value)
+        return loads(value)
 
 
 class ExternalDatabase(object):
@@ -83,39 +76,26 @@ class InternalDatabase(object):
 
     @classmethod
     def create(cls):
-        from request import DubokuRu, DubokuTv
+        import request
 
         cls.connection.create_tables([Drama])
-        urls = {drama.url for drama in Drama.select()}
+        paths = {drama.path for drama in Drama.select()}
 
-        for vodshow in [iter(DubokuTv.vodshow('/vodshow/2--------{}---.html'.format(page)) for page in range(1, 39)),
-                        iter(DubokuTv.vodshow('/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
-                        iter(DubokuTv.vodshow('/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5))]:
-            for show, _ in vodshow:
-                for url in show:
-                    if url not in urls:
-                        urls.add(url)
-                        while True:
-                            try:
-                                Drama.create(**DubokuTv.voddetail(url))
-                                break
-                            except AttributeError:
-                                pass
-
-        for vodshow in [iter(DubokuRu.vodshow('/vod/2--------{}---.html'.format(page)) for page in range(1, 342)),
-                        iter(DubokuRu.vodshow('/vod/1--------{}---.html'.format(page)) for page in range(1, 404)),
-                        iter(DubokuRu.vodshow('/vod/3--------{}---.html'.format(page)) for page in range(1, 43)),
-                        iter(DubokuRu.vodshow('/vod/4--------{}---.html'.format(page)) for page in range(1, 74))]:
-            for show, _ in vodshow:
-                for url in show:
-                    if url not in urls:
-                        urls.add(url)
-                        while True:
-                            try:
-                                Drama.create(**DubokuRu.voddetail(url))
-                                break
-                            except AttributeError:
-                                pass
+        for shows in [iter(request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 39)),
+                      iter(request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 351)),
+                      iter(request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 410)),
+                      iter(request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 44)),
+                      iter(request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 75))]:
+            for show in shows:
+                for path in show:
+                    if path not in paths:
+                        paths.add(path)
+                        try:
+                            Drama.create(**request.voddetail(path))
+                        except AttributeError:
+                            pass
 
         cls.connection.commit()
 
@@ -131,7 +111,7 @@ class InternalModel(Model):
 
 
 class Drama(InternalModel, ListItem):
-    url = CharField(primary_key=True, constraints=[SQL('ON CONFLICT REPLACE')])
+    path = CharField(primary_key=True, constraints=[SQL('ON CONFLICT REPLACE')])
     poster = CharField()
     title = JSONField()
     plot = JSONField()
@@ -146,17 +126,19 @@ class Drama(InternalModel, ListItem):
 
     def __init__(self, *args, **kwargs):
         super(Drama, self).__init__(*args, **kwargs)
-        self.setLabel(kwargs['title'][language])
-        self.setArt({'thumb': kwargs['poster'],
-                     'poster': kwargs['poster'],
-                     'banner': kwargs['poster'],
-                     'fanart': kwargs['poster'],
+        self.setLabel(self.gettranslation(kwargs['title']) if 'title' in kwargs else '')
+        self.setArt({'banner': kwargs['poster'],
                      'clearart': kwargs['poster'],
+                     'fanart': kwargs['poster'],
+                     'icon': kwargs['poster'],
                      'landscape': kwargs['poster'],
-                     'icon': kwargs['poster']} if 'poster' in kwargs else {})
-        labels = {label: kwargs[label][language] for label in ('title', 'plot', 'country', 'cast', 'director')}
-        labels['year'] = kwargs['year']
-        self.setInfo('video', labels)
+                     'poster': kwargs['poster'],
+                     'thumb': kwargs['poster']} if 'poster' in kwargs else {})
+        self.setInfo('video', {label: kwargs['year'] if label == 'year' else self.gettranslation(kwargs[label])
+                               for label in ('title', 'plot', 'country', 'status', 'genre', 'year') if label in kwargs})
+
+    def gettranslation(self, dictionary):
+        return dictionary.get(getLanguage(), dictionary['zh'])
 
 
 class RecentDrama(ExternalModel):
@@ -165,8 +147,8 @@ class RecentDrama(ExternalModel):
 
 
 class RecentFilter(ExternalModel, ListItem):
-    path = CharField(null=False)
-    title = CharField(primary_key=True, constraints=[SQL('ON CONFLICT REPLACE')])
+    path = CharField(primary_key=True, constraints=[SQL('ON CONFLICT REPLACE')])
+    title = CharField()
     timestamp = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
 
     def __new__(cls, *args, **kwargs):
@@ -180,10 +162,7 @@ class RecentFilter(ExternalModel, ListItem):
 
 if __name__ == '__main__':
     try:
-        language = 'zh'
         InternalDatabase.connect()
         InternalDatabase.create()
     finally:
         InternalDatabase.close()
-else:
-    language = getLanguage()

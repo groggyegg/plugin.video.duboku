@@ -1,141 +1,178 @@
 from functools import reduce
-from re import match
+from json import dumps
+from operator import or_
 
-from xbmcext import Dialog, Keyboard, ListItem, Plugin, executebuiltin
+from resolveurl import resolve
+from xbmcext import Dialog, Keyboard, ListItem, Plugin, executebuiltin, SortMethod
 
-from database import ExternalDatabase, InternalDatabase, Drama, RecentDrama
-from request import DubokuTv
+from database import ExternalDatabase, InternalDatabase, Drama, RecentDrama, RecentFilter
+from request import vodplaylist, vodvideo, vodepisode
 
 plugin = Plugin()
 
 
 @plugin.route('/')
 def home():
-    plugin.addDirectoryItems([(plugin.getUrlFor('/vodsearch'), ListItem('搜索', iconImage='DefaultAddonsSearch.png'), True),
-                              (plugin.getUrlFor('/recently-watched'), ListItem('最近看过', iconImage='DefaultTags.png'), True),
-                              (plugin.getUrlFor('/vodtype'), ListItem('连续剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/3.html'), ListItem('综艺', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/4.html'), ListItem('动漫', iconImage='DefaultTVShows.png'), True)])
+    plugin.addDirectoryItems([
+        (plugin.getUrlFor('/search'), ListItem('搜索(Search)', iconImage='DefaultAddonsSearch.png'), True),
+        (plugin.getUrlFor('/recently-viewed'), ListItem('最近看过(Recently Watched)', iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/recently-filtered'), ListItem('(Recently Filtered)', iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/vodfilter'), ListItem('连续剧(TV Series)', iconImage='DefaultTVShows.png'), True)
+    ])
     plugin.endOfDirectory()
 
 
-@plugin.route('/vodsearch')
+@plugin.route('/search')
 def search():
     keyboard = Keyboard()
     keyboard.doModal()
 
     if keyboard.isConfirmed():
-        plugin.redirect('{}/-------------.html'.format(plugin.path), wd={keyboard.getText()})
+        plugin.redirect('/search', keyword='*{}*'.format(keyboard.getText()))
 
 
-@plugin.route('/vodsearch/{}')
-def vodsearch():
-    search, paging = DubokuTv.vodsearch(plugin.getFullPath())
+@plugin.route('/search')
+def search_keyword(keyword):
     items = []
 
-    for path in search:
-        item = Drama.get_or_none(Drama.url == path)
-        items.append((plugin.getUrlFor(path), item if item else Drama.create(**DubokuTv.voddetail(path)), True))
-
-    for path, label, active in paging:
-        item = ListItem(label, iconImage='DefaultFolderBack.png')
-        item.setProperty('SpecialSort', 'bottom')
-        items.append((plugin.getSerializedUrlFor(path), item, True))
+    for item in Drama.select().where((Drama.title % keyword) | (Drama.plot % keyword)):
+        items.append((plugin.getUrlFor(item.path), item, True))
 
     plugin.setContent('tvshows')
     plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
-@plugin.route('/recently-watched')
-def recently_watched():
+@plugin.route('/recently-viewed')
+def recently_viewed():
     items = []
 
-    for drama in RecentDrama.select(RecentDrama.path).order_by(RecentDrama.timestamp.desc()):
-        item = Drama.get_or_none(Drama.url == drama.url)
-        item = item if item else Drama.create(**DubokuTv.voddetail(drama.url))
-        item.addContextMenuItems([('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor(plugin.path, delete=item.url))),
-                                  ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor(plugin.path, delete='%')))])
-        items.append((plugin.getUrlFor(item.url), item, True))
+    for recent_drama in RecentDrama.select(RecentDrama.path).order_by(RecentDrama.timestamp.desc()):
+        item = Drama.get(Drama.path.contains(recent_drama.path))
+        item.addContextMenuItems([
+            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-viewed', delete=recent_drama.path))),
+            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-viewed', delete='%')))
+        ])
+        items.append((plugin.getUrlFor(recent_drama.path), item, True))
 
     plugin.setContent('tvshows')
     plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
-@plugin.route('/recently-watched')
-def delete_recently_watched(delete):
+@plugin.route('/recently-filtered')
+def recently_filtered():
+    items = []
+
+    for recent_filter in RecentFilter.select(RecentFilter.path, RecentFilter.title).order_by(RecentFilter.timestamp.desc()):
+        recent_filter.addContextMenuItems([
+            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-filtered', delete=recent_filter.path))),
+            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-filtered', delete='%')))
+        ])
+        items.append((plugin.getUrlFor(recent_filter.path), recent_filter, True))
+
+    plugin.addDirectoryItems(items)
+    plugin.endOfDirectory()
+
+
+@plugin.route('/recently-viewed')
+def delete_recently_viewed(delete):
     RecentDrama.delete().where(RecentDrama.path ** delete).execute()
     executebuiltin('Container.Refresh')
 
 
-@plugin.route('/vodtype')
-def vodtype():
-    plugin.addDirectoryItems([(plugin.getUrlFor('/vodtype/2.html'), ListItem('全部', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/13.html'), ListItem('陆剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/15.html'), ListItem('日韩剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/21.html'), ListItem('短剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/14.html'), ListItem('台泰剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getUrlFor('/vodtype/20.html'), ListItem('港剧', iconImage='DefaultTVShows.png'), True)])
+@plugin.route('/recently-filtered')
+def delete_recently_filtered(delete):
+    RecentFilter.delete().where(RecentFilter.path ** delete).execute()
+    executebuiltin('Container.Refresh')
+
+
+@plugin.route('/vodfilter')
+def filter_vod():
+    items = Dialog().multiselecttab('Filter', {
+        'Source': ['duboku.ru', 'duboku.tv'],
+        'Category': sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
+        'Country': sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
+        'Year': [str(drama.year) for drama in Drama.select(Drama.year).order_by(Drama.year.desc()).distinct()]
+    })
+
+    if items:
+        items = {key: dumps(sorted(value), ensure_ascii=False) for key, value in items.items()}
+        plugin.redirect('/vodshow/{Source}/{Category}/{Country}/{Year}'.format(**items))
+
+
+@plugin.route('/vodshow/{sources:json}/{categories:json}/{countries:json}/{years:json}')
+def show_vod(sources, categories, countries, years):
+    expression = Drama.path % '*'
+
+    if sources:
+        expression &= reduce(or_, [(Drama.path % '*{}*'.format(source)) for source in sources])
+
+    if categories:
+        expression &= Drama.category % ('*{}*'.format('*'.join('"{}"'.format(category) for category in categories)))
+
+    if countries:
+        expression &= Drama.country % ('*{}*'.format('*'.join('"{}"'.format(country) for country in countries)))
+
+    if years:
+        expression &= Drama.year << years
+
+    title = 'Source: [{}] Category: [{}] Country: [{}] Year: [{}]'.format(', '.join(sources), ', '.join(categories), ', '.join(countries), ', '.join(years))
+    RecentFilter.create(path=plugin.path, title=title)
+    items = []
+
+    for item in Drama.select().where(expression):
+        items.append((plugin.getUrlFor(item.path), item, True))
+
+    plugin.setContent('tvshows')
+    plugin.addSortMethods(SortMethod.TITLE, SortMethod.VIDEO_YEAR)
+    plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
-@plugin.route(r'/vodtype/{}')
-def showtype():
-    filter, preselect = DubokuTv.vodfilter(plugin.path)
-    selected = Dialog().selecttab('筛选', filter, preselect)
-
-    if selected:
-        def join(accumulator, value):
-            return [val if val else acc for acc, val in zip(accumulator, value)]
-
-        pattern = '/vodshow/(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?)-(.*?).html'
-        values = reduce(join, [list(match(pattern, filter[key][value]).groups()) for key, value in selected.items()])
-        plugin.redirect('/vodshow/{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}.html'.format(*values))
-
-
-@plugin.route('/vodshow/{}')
-def vodshow():
-    show, paging = DubokuTv.vodshow(plugin.path)
+@plugin.route('/www.duboku.tv/voddetail/{}')
+@plugin.route('/duboku.ru/voddetail/{}')
+def playlist():
     items = []
 
-    for path in show:
-        item = Drama.select().where(Drama.url == path).get_or_none()
-        items.append((plugin.getSerializedUrlFor(path), item if item else Drama.create(**voddetail(path)), True))
-
-    for path, title in paging:
-        item = ListItem(title)
-        item.setProperty('SpecialSort', 'bottom')
-        items.append((plugin.getSerializedUrlFor(path), item, True))
+    for label, playlist_id in vodplaylist(plugin.path):
+        item = ListItem(label)
+        items.append((plugin.getSerializedUrlFor(plugin.path, playlist_id=playlist_id), item, True))
 
     plugin.setContent('tvshows')
     plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
-@plugin.route('/voddetail/{}')
-def voddetail():
+@plugin.route('/www.duboku.tv/voddetail/{}')
+@plugin.route('/duboku.ru/voddetail/{}')
+def episode(playlist_id):
     items = []
 
-    for path, label in DubokuTv.voddetail(plugin.path):
-        item = ListItem(label)
+    for path, title in vodepisode(plugin.path, playlist_id):
+        item = Drama(title=title)
         item.setProperty('IsPlayable', 'true')
-        items.append((plugin.getSerializedUrlFor(path), item, False))
+        items.append((plugin.getUrlFor(path), item, False))
 
     plugin.setContent('episodes')
     plugin.addDirectoryItems(items)
     plugin.endOfDirectory(cacheToDisc=False)
 
 
-@plugin.route('/vodplay/{}')
-def vodplay():
-    path, url, label = DubokuTv.vodplay(plugin.path)
+@plugin.route('/duboku.ru/video/{}')
+@plugin.route('/www.duboku.tv/vodplay/{}')
+def play():
+    path, title = vodvideo(plugin.path)
+    item = Drama(title=title)
+    url = resolve('https:/{}'.format(plugin.path))
 
     if url:
         RecentDrama.create(path=path)
-        plugin.setResolvedUrl(True, ListItem(label, path=url))
+        item.setPath(url)
     else:
         Dialog().notification('找不到视频', '')
+
+    plugin.setResolvedUrl(bool(url), item)
 
 
 if __name__ == '__main__':
