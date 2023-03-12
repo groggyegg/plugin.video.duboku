@@ -22,79 +22,98 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from re import compile, split, match
+from re import compile, match, search, split, DOTALL
 
 from bs4 import BeautifulSoup, SoupStrainer
 from requests import Session
-from xbmcext import urlparse
+from xbmcext import Log, urlparse
+from xbmcext.pymaybe import maybe
 
 
-def get(path):
-    response = session.get('https:/{}'.format(path))
+class Request(object):
+    session = Session()
 
-    if response.status_code == 200:
-        return response.text
+    @classmethod
+    def get(cls, path):
+        url = 'https:/{}'.format(path)
+        Log.info('[plugin.video.duboku] GET "{}"'.format(url))
+        response = cls.session.get(url)
 
-    raise Exception()
+        if response.status_code == 200:
+            return response.text
 
+        raise Exception()
 
-def post(path, **params):
-    response = session.post('https:/{}'.format(path), params=params)
+    @classmethod
+    def post(cls, path, **params):
+        response = cls.session.post('https:/{}'.format(path), params=params)
 
-    if response.status_code == 200:
-        return
+        if response.status_code == 200:
+            return
 
-    raise Exception()
+        raise Exception()
 
+    @classmethod
+    def netloc(cls, path):
+        url = urlparse('https:/{}'.format(path))
+        return url.netloc
 
-def vodshow(path):
-    _, netloc, _, _, _, _ = urlparse('https:/{}'.format(path))
-    strainer = SoupStrainer(['div', 'ul'], {'class': ['myui-panel myui-panel-bg clearfix', 'myui-page text-center clearfix']})
-    soup = BeautifulSoup(get(path), 'html.parser', parse_only=strainer)
-    return ['/{}{}'.format(netloc, a.attrs['href']) for a in soup.find('div', {'class': 'myui-panel_bd'}).find_all('a', {'class': 'myui-vodlist__thumb'})]
+    @classmethod
+    def urlunsplit(cls, netloc, path):
+        return path if path.startswith('https://') else 'https:/{}'.format(cls.urljoin(netloc, path))
 
+    @classmethod
+    def urljoin(cls, netloc, path):
+        return '/{}{}'.format(netloc, path)
 
-def voddetail(path):
-    _, netloc, _, _, _, _ = urlparse('https:/{}'.format(path))
-    attrs = {'class': ['data', 'myui-content__detail', 'myui-content__thumb', 'myui-msg__head text-center', 'myui-msg__body']}
-    strainer = SoupStrainer(['div', 'span'], attrs)
-    soup = BeautifulSoup(get(path), 'html.parser', parse_only=strainer)
-    pwd = soup.find('p', {'class': 'text-red'})
+    @classmethod
+    def vodshow(cls, path):
+        netloc = cls.netloc(path)
+        parse_only = SoupStrainer(['div', 'ul'], {'class': ['myui-panel myui-panel-bg clearfix', 'myui-page text-center clearfix']})
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=parse_only)
+        shows = [cls.urljoin(netloc, a.attrs['href']) for a in doc.find('div', {'class': 'myui-panel_bd'}).find_all('a', {'data-original': True})]
+        selected = maybe(doc.find('a', {'class': 'btn btn-warm'})).attrs['href']
+        pages = [(cls.urljoin(netloc, a.attrs['href']), a.text) for a in doc.find_all('a', text=['上一页', '下一页']) if a.attrs['href'] != selected]
+        return shows, pages
 
-    if pwd:
-        pwd = match('密码：(.+)', pwd.text).group(1)
-        attrs = soup.find('a', {'data-id': True, 'data-mid': True, 'data-type': True}).attrs
-        post('https://{}/index.php/ajax/pwd.html'.format(netloc), id=attrs['data-id'], mid=attrs['data-mid'], pwd=pwd, type=attrs['data-type'])
-        soup = BeautifulSoup(get(path), 'html.parser', parse_only=strainer)
+    @classmethod
+    def voddetail(cls, path):
+        netloc = cls.netloc(path)
+        parse_only = SoupStrainer(['div', 'span'], {'class': ['data', 'myui-content__detail', 'myui-content__thumb', 'myui-msg__head text-center', 'myui-msg__body']})
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=parse_only)
+        pwd = doc.find('p', {'class': 'text-red'})
 
-    poster = soup.find('img').attrs['data-original']
+        if pwd:
+            pwd = match('密码：(.+)', pwd.text).group(1)
+            attrs = doc.find('a', {'data-id': True, 'data-mid': True, 'data-type': True}).attrs
+            cls.post(cls.urlunsplit(netloc, '/index.php/ajax/pwd.html'), id=attrs['data-id'], mid=attrs['data-mid'], pwd=pwd, type=attrs['data-type'])
+            doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=parse_only)
 
-    return {'path': path,
-            'poster': poster if poster.startswith('https://') else 'https://{}{}'.format(netloc, poster),
-            'title': {'zh': soup.find('h1').text},
-            'plot': {'zh': soup.find('span', {'class': 'data'}).text.replace('　', '')},
-            'category': {'zh': soup.find('span', text='分类：').next_sibling.text},
-            'country': {'zh': sorted(filter(None, map(str.strip, split(',|/|\u3001', soup.find('span', text='地区：').next_sibling.text))))},
-            'cast': {'zh': sorted(filter(None, split(',|\xa0', soup.find('span', text='主演：').parent.text.lstrip('主演：'))))},
-            'director': {'zh': sorted(filter(None, split(',|\xa0', soup.find('span', text='导演：').parent.text.lstrip('导演：'))))},
-            'year': int(soup.find('span', text='年份：').next_sibling.text.replace('未知', '0'))}
+        category, country, year = search('分类：(.+)地区：(.+)年份：(.+)', doc.find('p', {'class': 'data'}).text.strip(), DOTALL).groups()
 
+        return {'path': path,
+                'poster': cls.urlunsplit(netloc, doc.find('img').attrs['data-original']),
+                'title': {'zh': doc.find('h1').text},
+                'plot': {'zh': doc.find('span', {'class': 'data'}).text.replace('　', '')},
+                'category': {'zh': category.strip()},
+                'country': {'zh': sorted(filter(None, map(str.strip, split(',|/|\u3001', country))))},
+                'cast': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='主演：').parent.text.lstrip('主演：'))))},
+                'director': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='导演：').parent.text.lstrip('导演：'))))},
+                'year': int(year.replace('未知', '0'))}
 
-def vodplaylist(path):
-    soup = BeautifulSoup(get(path), 'html.parser', parse_only=SoupStrainer('a', {'href': compile('#playlist\\d')}))
-    return [(a.text, a.attrs['href'].strip('#')) for a in soup.find_all('a')]
+    @classmethod
+    def voddetail_playlist(cls, path):
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('a', {'href': compile('#playlist\\d')}))
+        return [(a.attrs['href'].strip('#'), a.text) for a in doc.find_all('a')]
 
+    @classmethod
+    def voddetail_episode(cls, path, id):
+        netloc = cls.netloc(path)
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('div', {'id': id}))
+        return [(cls.urljoin(netloc, a.attrs['href']), {'zh': a.text}) for a in doc.find_all('a')]
 
-def vodepisode(path, id):
-    _, netloc, _, _, _, _ = urlparse('https:/{}'.format(path))
-    soup = BeautifulSoup(get(path), 'html.parser', parse_only=SoupStrainer('div', {'id': id}))
-    return [('/{}{}'.format(netloc, a.attrs['href']), {'zh': a.text}) for a in soup.find_all('a')]
-
-
-def vodvideo(path):
-    _, netloc, _, _, _, _ = urlparse('https:/{}'.format(path))
-    soup = BeautifulSoup(get(path), 'html.parser', parse_only=SoupStrainer('h2'))
-    return '/{}{}'.format(netloc, soup.find('a').attrs['href']), {'zh': soup.text.replace('\n', ' ').strip()}
-
-
-session = Session()
+    @classmethod
+    def vodplay(cls, path):
+        netloc = cls.netloc(path)
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('h2'))
+        return cls.urlunsplit(netloc, doc.find('a').attrs['href']), {'zh': doc.text.replace('\n', ' ').strip()}

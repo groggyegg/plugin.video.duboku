@@ -23,7 +23,8 @@ SOFTWARE.
 """
 
 from json import dumps, loads
-from os import makedirs, path
+from os import makedirs
+from os.path import exists, join
 
 from peewee import CharField, SqliteDatabase, Model, SQL, SmallIntegerField, DateTimeField
 from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLanguage
@@ -42,7 +43,7 @@ class JSONField(CharField):
 
 class ExternalDatabase(object):
     profile_path = getAddonProfilePath()
-    connection = SqliteDatabase(path.join(profile_path, 'duboku.db'))
+    connection = SqliteDatabase(join(profile_path, 'duboku.db'))
 
     @classmethod
     def close(cls):
@@ -50,7 +51,7 @@ class ExternalDatabase(object):
 
     @classmethod
     def connect(cls):
-        if not path.exists(cls.profile_path):
+        if not exists(cls.profile_path):
             makedirs(cls.profile_path)
 
         cls.connection.connect(True)
@@ -63,7 +64,7 @@ class ExternalDatabase(object):
 
 class InternalDatabase(object):
     addon_path = getAddonPath()
-    connection = SqliteDatabase(path.join(addon_path if addon_path else '..', 'resources/data/duboku.db'))
+    connection = SqliteDatabase(join(addon_path if addon_path else '..', 'resources/data/duboku.db'))
 
     @classmethod
     def close(cls):
@@ -76,24 +77,24 @@ class InternalDatabase(object):
 
     @classmethod
     def create(cls):
-        import request
+        from request import Request
 
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
-        for shows in [iter(request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 39)),
-                      iter(request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 351)),
-                      iter(request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 410)),
-                      iter(request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 44)),
-                      iter(request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 75))]:
+        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 39)),
+                      iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 351)),
+                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 410)),
+                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 44)),
+                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 75))]:
             for show in shows:
                 for path in show:
                     if path not in paths:
                         paths.add(path)
                         try:
-                            Drama.create(**request.voddetail(path))
+                            Drama.create(**Request.voddetail(path))
                         except AttributeError:
                             pass
 

@@ -1,12 +1,36 @@
+"""
+MIT License
+
+Copyright (c) 2023 groggyegg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from functools import reduce
 from json import dumps
 from operator import or_
 
 from resolveurl import resolve
-from xbmcext import Dialog, Keyboard, ListItem, Plugin, executebuiltin, SortMethod
+from xbmcext import Dialog, Keyboard, ListItem, Plugin, SortMethod, executebuiltin, urljoin
 
 from database import ExternalDatabase, InternalDatabase, Drama, RecentDrama, RecentFilter
-from request import vodplaylist, vodvideo, vodepisode
+from request import Request
 
 plugin = Plugin()
 
@@ -14,32 +38,12 @@ plugin = Plugin()
 @plugin.route('/')
 def home():
     plugin.addDirectoryItems([
-        (plugin.getUrlFor('/search'), ListItem('搜索(Search)', iconImage='DefaultAddonsSearch.png'), True),
+        (plugin.getUrlFor('/vodsearch'), ListItem('搜索', iconImage='DefaultAddonsSearch.png'), True),
         (plugin.getUrlFor('/recently-viewed'), ListItem('最近看过(Recently Watched)', iconImage='DefaultTags.png'), True),
         (plugin.getUrlFor('/recently-filtered'), ListItem('(Recently Filtered)', iconImage='DefaultTags.png'), True),
-        (plugin.getUrlFor('/vodfilter'), ListItem('连续剧(TV Series)', iconImage='DefaultTVShows.png'), True)
+        (plugin.getUrlFor('/www.duboku.tv'), ListItem('www.duboku.tv', iconImage='DefaultTVShows.png'), True),
+        (plugin.getUrlFor('/duboku.ru'), ListItem('duboku.ru', iconImage='DefaultTVShows.png'), True)
     ])
-    plugin.endOfDirectory()
-
-
-@plugin.route('/search')
-def search():
-    keyboard = Keyboard()
-    keyboard.doModal()
-
-    if keyboard.isConfirmed():
-        plugin.redirect('/search', keyword='*{}*'.format(keyboard.getText()))
-
-
-@plugin.route('/search')
-def search_keyword(keyword):
-    items = []
-
-    for item in Drama.select().where((Drama.title % keyword) | (Drama.plot % keyword)):
-        items.append((plugin.getUrlFor(item.path), item, True))
-
-    plugin.setContent('tvshows')
-    plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
@@ -87,22 +91,44 @@ def delete_recently_filtered(delete):
     executebuiltin('Container.Refresh')
 
 
-@plugin.route('/vodfilter')
-def filter_vod():
-    items = Dialog().multiselecttab('Filter', {
-        'Source': ['duboku.ru', 'duboku.tv'],
-        'Category': sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
-        'Country': sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
-        'Year': [str(drama.year) for drama in Drama.select(Drama.year).order_by(Drama.year.desc()).distinct()]
-    })
+@plugin.route('/vodsearch')
+def vodsearch_keyboard():
+    keyboard = Keyboard()
+    keyboard.doModal()
+
+    if keyboard.isConfirmed():
+        plugin.redirect('/vodsearch', keyword='*{}*'.format(keyboard.getText()))
+
+
+@plugin.route('/vodsearch')
+def vodsearch(keyword):
+    items = []
+
+    for item in Drama.select().where((Drama.title % keyword) | (Drama.plot % keyword)):
+        items.append((plugin.getUrlFor(item.path), item, True))
+
+    plugin.setContent('tvshows')
+    plugin.addDirectoryItems(items)
+    plugin.endOfDirectory()
+
+
+@plugin.route('/vodshow')
+def vodshow_database_filter():
+    options = {
+        '来源': ['duboku.ru', 'duboku.tv'],
+        '分类': sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
+        '地区': sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
+        '年份': [str(drama.year) for drama in Drama.select(Drama.year).order_by(Drama.year.desc()).distinct()]
+    }
+    items = Dialog().multiselecttab('筛选', options)
 
     if items:
         items = {key: dumps(sorted(value), ensure_ascii=False) for key, value in items.items()}
-        plugin.redirect('/vodshow/{Source}/{Category}/{Country}/{Year}'.format(**items))
+        plugin.redirect('/vodshow/{}/{}/{}/{}'.format(items['来源'], items['分类'], items['地区'], items['年份']))
 
 
 @plugin.route('/vodshow/{sources:json}/{categories:json}/{countries:json}/{years:json}')
-def show_vod(sources, categories, countries, years):
+def vodshow_database(sources, categories, countries, years):
     expression = Drama.path % '*'
 
     if sources:
@@ -117,8 +143,7 @@ def show_vod(sources, categories, countries, years):
     if years:
         expression &= Drama.year << years
 
-    title = 'Source: [{}] Category: [{}] Country: [{}] Year: [{}]'.format(', '.join(sources), ', '.join(categories), ', '.join(countries), ', '.join(years))
-    RecentFilter.create(path=plugin.path, title=title)
+    RecentFilter.create(path=plugin.path, title='无标题')
     items = []
 
     for item in Drama.select().where(expression):
@@ -130,14 +155,148 @@ def show_vod(sources, categories, countries, years):
     plugin.endOfDirectory()
 
 
-@plugin.route('/www.duboku.tv/voddetail/{}')
-@plugin.route('/duboku.ru/voddetail/{}')
-def playlist():
+@plugin.route('/duboku.ru')
+def dubokuru():
+    plugin.addDirectoryItems([(plugin.getSerializedUrlFor('/duboku.ru/vod/2-----------.html', id=2), ListItem('连续剧', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/duboku.ru/vod/1-----------.html', id=1), ListItem('电影', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/duboku.ru/vod/3-----------.html', id=3), ListItem('综艺', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/duboku.ru/vod/4-----------.html', id=4), ListItem('动漫', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/duboku.ru/vod/20-----------.html', id=20), ListItem('港剧', iconImage='DefaultTVShows.png'), True)])
+    plugin.endOfDirectory()
+
+
+@plugin.route('/www.duboku.tv')
+def wwwdubokutv():
+    plugin.addDirectoryItems([(plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/2-----------.html', id=2), ListItem('连续剧', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/3-----------.html', id=3), ListItem('综艺', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/4-----------.html', id=4), ListItem('动漫', iconImage='DefaultTVShows.png'), True),
+                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/20-----------.html', id=20), ListItem('港剧', iconImage='DefaultTVShows.png'), True)])
+    plugin.endOfDirectory()
+
+
+@plugin.route('/www.duboku.tv/vodshow/{}')
+@plugin.route('/duboku.ru/vod/{}')
+def vodshow_filter(id):
+    options = {
+        '剧情': [
+            '全部',
+            '悬疑',
+            '武侠',
+            '科幻',
+            '都市',
+            '爱情',
+            '古装',
+            '战争',
+            '青春',
+            '偶像',
+            '喜剧',
+            '家庭',
+            '犯罪',
+            '奇幻',
+            '剧情',
+            '乡村',
+            '年代',
+            '警匪',
+            '谍战',
+            '冒险',
+            '罪案',
+            '宫廷',
+            'BL',
+            '真人秀',
+            '选秀',
+            '竞演',
+            '情感',
+            '访谈',
+            '播报',
+            '旅游',
+            '音乐',
+            '美食',
+            '纪实',
+            '曲艺',
+            '生活',
+            '游戏互动',
+            '玄幻',
+            '热血',
+            '推理',
+            '搞笑',
+            '萝莉',
+            '校园',
+            '动作',
+            '机战',
+            '运动',
+            '少年',
+            '少女',
+            '社会',
+            '亲子',
+            '益智',
+            '励志',
+            '其他'
+        ],
+        '地区': ['全部', '内地', '韩国', '香港', '台湾', '美国', '英国', '巴西', '泰国', '法国', '日本', '荷兰', '国产', '其他'],
+        '年份': ['全部', '2023', '2022', '2021', '2020', '2019', '2018', '2017'],
+        '语言': ['全部', '国语', '英语', '粤语', '韩语', '泰语', '法语', '日语', '闽南语', '其它'],
+        '字母': [
+            '全部',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+            '0-9'
+        ],
+        '排序': ['时间', '人气', '评分']
+    }
+    items = Dialog().selecttab('筛选', options, {'剧情': '全部', '地区': '全部', '年份': '全部', '语言': '全部', '字母': '全部', '排序': '时间'})
+
+    if items:
+        path = urljoin(plugin.path, '{}-{}-{}-{}-{}-{}------{}.html'.format(
+            id,
+            items['地区'].replace('全部', ''),
+            items['排序'].replace('时间', 'time').replace('人气', 'hits').replace('评分', 'score'),
+            items['剧情'].replace('全部', ''),
+            items['语言'].replace('全部', ''),
+            items['字母'].replace('全部', ''),
+            items['年份'].replace('全部', '')))
+        RecentFilter.create(path=path, title='无标题')
+        plugin.redirect(path)
+
+
+@plugin.route('/www.duboku.tv/vodshow/{}')
+@plugin.route('/duboku.ru/vod/{}')
+def vodshow():
+    shows, pages = Request.vodshow(plugin.path)
     items = []
 
-    for label, playlist_id in vodplaylist(plugin.path):
-        item = ListItem(label)
-        items.append((plugin.getSerializedUrlFor(plugin.path, playlist_id=playlist_id), item, True))
+    for path in shows:
+        item = Drama.get_or_none(Drama.path == path)
+        item = item if item else Drama.create(**Request.voddetail(path))
+        items.append((plugin.getSerializedUrlFor(item.path), item, True))
+
+    for path, label in pages:
+        item = ListItem(label, iconImage='DefaultFolderBack.png' if label == '上一页' else '')
+        item.setProperty('SpecialSort', 'bottom')
+        items.append((plugin.getUrlFor(path), item, True))
 
     plugin.setContent('tvshows')
     plugin.addDirectoryItems(items)
@@ -146,10 +305,24 @@ def playlist():
 
 @plugin.route('/www.duboku.tv/voddetail/{}')
 @plugin.route('/duboku.ru/voddetail/{}')
-def episode(playlist_id):
+def voddetail_playlist():
     items = []
 
-    for path, title in vodepisode(plugin.path, playlist_id):
+    for id, label in Request.voddetail_playlist(plugin.path):
+        item = ListItem(label)
+        items.append((plugin.getSerializedUrlFor(plugin.path, id=id), item, True))
+
+    plugin.setContent('tvshows')
+    plugin.addDirectoryItems(items)
+    plugin.endOfDirectory()
+
+
+@plugin.route('/www.duboku.tv/voddetail/{}')
+@plugin.route('/duboku.ru/voddetail/{}')
+def voddetail_episode(id):
+    items = []
+
+    for path, title in Request.voddetail_episode(plugin.path, id):
         item = Drama(title=title)
         item.setProperty('IsPlayable', 'true')
         items.append((plugin.getUrlFor(path), item, False))
@@ -161,8 +334,8 @@ def episode(playlist_id):
 
 @plugin.route('/duboku.ru/video/{}')
 @plugin.route('/www.duboku.tv/vodplay/{}')
-def play():
-    path, title = vodvideo(plugin.path)
+def vodplay():
+    path, title = Request.vodplay(plugin.path)
     item = Drama(title=title)
     url = resolve('https:/{}'.format(plugin.path))
 
