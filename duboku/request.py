@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from re import compile, match, search, split, DOTALL
+from re import compile, match, search, split
 
 from bs4 import BeautifulSoup, SoupStrainer
 from requests import Session
@@ -89,17 +89,15 @@ class Request(object):
             cls.post(cls.urlunsplit(netloc, '/index.php/ajax/pwd.html'), id=attrs['data-id'], mid=attrs['data-mid'], pwd=pwd, type=attrs['data-type'])
             doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=parse_only)
 
-        category, country, year = search('分类：(.+)地区：(.+)年份：(.+)', doc.find('p', {'class': 'data'}).text.strip(), DOTALL).groups()
-
         return {'path': path,
                 'poster': cls.urlunsplit(netloc, doc.find('img').attrs['data-original']),
                 'title': {'zh': doc.find('h1').text},
                 'plot': {'zh': doc.find('span', {'class': 'data'}).text.replace('　', '')},
-                'category': {'zh': category.strip()},
-                'country': {'zh': sorted(filter(None, map(str.strip, split(',|/|\u3001', country))))},
+                'category': {'zh': search('分类：(.+)', doc.find('p', {'class': 'data'}).text).group(1)},
+                'country': {'zh': sorted(filter(None, map(str.strip, split(',|/|\u3001', search('地区：(.+)', doc.find('p', {'class': 'data'}).text).group(1)))))},
                 'cast': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='主演：').parent.text.lstrip('主演：'))))},
                 'director': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='导演：').parent.text.lstrip('导演：'))))},
-                'year': int(year.replace('未知', '0'))}
+                'year': int(search('年份：(.+)', doc.find('p', {'class': 'data'}).text).group(1).replace('未知', '0'))}
 
     @classmethod
     def voddetail_playlist(cls, path):
@@ -116,4 +114,4 @@ class Request(object):
     def vodplay(cls, path):
         netloc = cls.netloc(path)
         doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('h2'))
-        return cls.urlunsplit(netloc, doc.find('a').attrs['href']), {'zh': doc.text.replace('\n', ' ').strip()}
+        return cls.urljoin(netloc, doc.find('a').attrs['href']), {'zh': doc.text.replace('\n', ' ').strip()}
