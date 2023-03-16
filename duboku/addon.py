@@ -25,7 +25,7 @@ SOFTWARE.
 from json import dumps
 
 from resolveurl import resolve
-from xbmcext import Dialog, ListItem, Plugin, SortMethod, executebuiltin, urljoin
+from xbmcext import Dialog, Keyboard, ListItem, Plugin, SortMethod, executebuiltin, urljoin
 
 from database import ExternalDatabase, InternalDatabase, Drama, RecentDrama, RecentFilter
 from request import Request
@@ -61,7 +61,7 @@ def recently_watched():
 
 
 @plugin.route('/recently-watched')
-def delete_recently_watched(delete):
+def recently_watched_delete(delete):
     RecentDrama.delete().where(RecentDrama.path ** delete).execute()
     executebuiltin('Container.Refresh')
 
@@ -72,7 +72,8 @@ def recently_searched():
 
     for recent_filter in RecentFilter.select(RecentFilter.path, RecentFilter.title).order_by(RecentFilter.timestamp.desc()):
         recent_filter.addContextMenuItems([
-            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete=recent_filter.path))),
+            ('重新命名', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', rename=recent_filter.title))),
+            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete=recent_filter.title))),
             ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete='%')))])
         items.append((plugin.getUrlFor(recent_filter.path), recent_filter, True))
 
@@ -81,8 +82,18 @@ def recently_searched():
 
 
 @plugin.route('/recently-searched')
-def delete_recently_searched(delete):
-    RecentFilter.delete().where(RecentFilter.path ** delete).execute()
+def recently_searched_rename(rename):
+    keyboard = Keyboard()
+    keyboard.doModal()
+
+    if keyboard.isConfirmed() and keyboard.getText():
+        RecentFilter.update(title=keyboard.getText()).where(RecentFilter.title == rename).execute()
+        executebuiltin('Container.Refresh')
+
+
+@plugin.route('/recently-searched')
+def recently_searched_delete(delete):
+    RecentFilter.delete().where(RecentFilter.title ** delete).execute()
     executebuiltin('Container.Refresh')
 
 
