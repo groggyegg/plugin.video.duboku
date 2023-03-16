@@ -37,22 +37,22 @@ plugin = Plugin()
 def home():
     plugin.addDirectoryItems([
         (plugin.getUrlFor('/vodsearch'), ListItem('搜索数据库', iconImage='DefaultAddonsSearch.png'), True),
-        (plugin.getUrlFor('/recently-viewed'), ListItem('最近看过', iconImage='DefaultTags.png'), True),
-        (plugin.getUrlFor('/recently-filtered'), ListItem('最近过滤', iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/recently-watched'), ListItem('最近看过', iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/recently-searched'), ListItem('最近搜索过', iconImage='DefaultTags.png'), True),
         (plugin.getUrlFor('/www.duboku.tv'), ListItem('www.duboku.tv', iconImage='DefaultTVShows.png'), True),
         (plugin.getUrlFor('/duboku.ru'), ListItem('duboku.ru', iconImage='DefaultTVShows.png'), True)])
     plugin.endOfDirectory()
 
 
-@plugin.route('/recently-viewed')
-def recently_viewed():
+@plugin.route('/recently-watched')
+def recently_watched():
     items = []
 
     for recent_drama in RecentDrama.select(RecentDrama.path).order_by(RecentDrama.timestamp.desc()):
         item = Drama.get(Drama.path.contains(recent_drama.path))
         item.addContextMenuItems([
-            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-viewed', delete=recent_drama.path))),
-            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-viewed', delete='%')))])
+            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete=recent_drama.path))),
+            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete='%')))])
         items.append((plugin.getUrlFor(recent_drama.path), item, True))
 
     plugin.setContent('tvshows')
@@ -60,28 +60,28 @@ def recently_viewed():
     plugin.endOfDirectory()
 
 
-@plugin.route('/recently-filtered')
-def recently_filtered():
+@plugin.route('/recently-watched')
+def delete_recently_watched(delete):
+    RecentDrama.delete().where(RecentDrama.path ** delete).execute()
+    executebuiltin('Container.Refresh')
+
+
+@plugin.route('/recently-searched')
+def recently_searched():
     items = []
 
     for recent_filter in RecentFilter.select(RecentFilter.path, RecentFilter.title).order_by(RecentFilter.timestamp.desc()):
         recent_filter.addContextMenuItems([
-            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-filtered', delete=recent_filter.path))),
-            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-filtered', delete='%')))])
+            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete=recent_filter.path))),
+            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete='%')))])
         items.append((plugin.getUrlFor(recent_filter.path), recent_filter, True))
 
     plugin.addDirectoryItems(items)
     plugin.endOfDirectory()
 
 
-@plugin.route('/recently-viewed')
-def delete_recently_viewed(delete):
-    RecentDrama.delete().where(RecentDrama.path ** delete).execute()
-    executebuiltin('Container.Refresh')
-
-
-@plugin.route('/recently-filtered')
-def delete_recently_filtered(delete):
+@plugin.route('/recently-searched')
+def delete_recently_searched(delete):
     RecentFilter.delete().where(RecentFilter.path ** delete).execute()
     executebuiltin('Container.Refresh')
 
