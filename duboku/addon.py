@@ -100,8 +100,8 @@ def recently_searched_delete(delete):
 @plugin.route('/vodsearch')
 def vodsearch_keyboard():
     keyword, items = Dialog().multiselecttabsearch(getLocalizedString(30000), {
-        (getLocalizedString(30013), '类型'): sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
-        (getLocalizedString(30042), '地区'): sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
+        (getLocalizedString(30013), '类型'): sorted(Drama.gettranslation(drama.category) for drama in Drama.select(Drama.category).distinct()),
+        (getLocalizedString(30042), '地区'): sorted({country for drama in Drama.select(Drama.country).distinct() for country in Drama.gettranslation(drama.country)}),
         (getLocalizedString(30057), '年份'): sorted((str(drama.year) for drama in Drama.select(Drama.year).distinct()), reverse=True)})
 
     if keyword is not None:

@@ -138,7 +138,8 @@ class Drama(InternalModel, ListItem):
         self.setInfo('video', {label: kwargs['year'] if label == 'year' else self.gettranslation(kwargs[label])
                                for label in ('title', 'plot', 'country', 'status', 'genre', 'year') if label in kwargs})
 
-    def gettranslation(self, dictionary):
+    @staticmethod
+    def gettranslation(dictionary):
         return dictionary.get(getLanguage(), dictionary['zh'])
 
 
