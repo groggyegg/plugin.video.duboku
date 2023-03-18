@@ -36,9 +36,9 @@ plugin = Plugin()
 @plugin.route('/')
 def home():
     plugin.addDirectoryItems([
-        (plugin.getUrlFor('/vodsearch'), ListItem('搜索数据库', iconImage='DefaultAddonsSearch.png'), True),
-        (plugin.getUrlFor('/recently-watched'), ListItem('最近看过', iconImage='DefaultTags.png'), True),
-        (plugin.getUrlFor('/recently-searched'), ListItem('最近搜索过', iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/vodsearch'), ListItem(getLocalizedString(30000), iconImage='DefaultAddonsSearch.png'), True),
+        (plugin.getUrlFor('/recently-watched'), ListItem(getLocalizedString(30001), iconImage='DefaultTags.png'), True),
+        (plugin.getUrlFor('/recently-searched'), ListItem(getLocalizedString(30131), iconImage='DefaultTags.png'), True),
         (plugin.getUrlFor('/www.duboku.tv'), ListItem('www.duboku.tv', iconImage='DefaultTVShows.png'), True),
         (plugin.getUrlFor('/duboku.ru'), ListItem('duboku.ru', iconImage='DefaultTVShows.png'), True)])
     plugin.endOfDirectory()
@@ -51,8 +51,8 @@ def recently_watched():
     for recent_drama in RecentDrama.select(RecentDrama.path).order_by(RecentDrama.timestamp.desc()):
         item = Drama.get(Drama.path.contains(recent_drama.path))
         item.addContextMenuItems([
-            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete=recent_drama.path))),
-            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete='%')))])
+            (getLocalizedString(30010), 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete=recent_drama.path))),
+            (getLocalizedString(30011), 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-watched', delete='%')))])
         items.append((plugin.getUrlFor(recent_drama.path), item, True))
 
     plugin.setContent('tvshows')
@@ -72,9 +72,9 @@ def recently_searched():
 
     for recent_filter in RecentFilter.select(RecentFilter.path, RecentFilter.title).order_by(RecentFilter.timestamp.desc()):
         recent_filter.addContextMenuItems([
-            ('重新命名', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', rename=recent_filter.title))),
-            ('移除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete=recent_filter.title))),
-            ('清除', 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete='%')))])
+            (getLocalizedString(30132), 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', rename=recent_filter.title))),
+            (getLocalizedString(30010), 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete=recent_filter.title))),
+            (getLocalizedString(30011), 'RunPlugin({})'.format(plugin.getSerializedUrlFor('/recently-searched', delete='%')))])
         items.append((plugin.getUrlFor(recent_filter.path), recent_filter, True))
 
     plugin.addDirectoryItems(items)
@@ -99,14 +99,14 @@ def recently_searched_delete(delete):
 
 @plugin.route('/vodsearch')
 def vodsearch_keyboard():
-    keyword, items = Dialog().multiselecttabsearch('搜索数据库', {
-        '分类': sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
-        '地区': sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
-        '年份': sorted((drama.year for drama in Drama.select(Drama.year).distinct()), reverse=True)})
+    keyword, items = Dialog().multiselecttabsearch(getLocalizedString(30000), {
+        (getLocalizedString(30013), '类型'): sorted(drama.category['zh'] for drama in Drama.select(Drama.category).distinct()),
+        (getLocalizedString(30042), '地区'): sorted({country for drama in Drama.select(Drama.country).distinct() for country in drama.country['zh']}),
+        (getLocalizedString(30057), '年份'): sorted((str(drama.year) for drama in Drama.select(Drama.year).distinct()), reverse=True)})
 
     if keyword is not None:
         items = {key: dumps(sorted(value), ensure_ascii=False) for key, value in items.items()}
-        plugin.redirect('/vodsearch/{}/{}/{}'.format(items['分类'], items['地区'], items['年份']), keyword='*{}*'.format(keyword))
+        plugin.redirect('/vodsearch/{}/{}/{}'.format(items['类型'], items['地区'], items['年份']), keyword='*{}*'.format(keyword))
 
 
 @plugin.route('/vodsearch/{categories:json}/{countries:json}/{years:json}')
@@ -122,7 +122,7 @@ def vodsearch(categories, countries, years, keyword):
     if years:
         expression &= Drama.year << years
 
-    RecentFilter.create(path=plugin.getSerializedFullPath(), title='无标题')
+    RecentFilter.create(path=plugin.getSerializedFullPath(), title=getLocalizedString(30133))
     plugin.setContent('tvshows')
     plugin.addSortMethods(SortMethod.TITLE, SortMethod.VIDEO_YEAR)
     plugin.addDirectoryItems([(plugin.getUrlFor(item.path), item, True) for item in Drama.select().where(expression)])
@@ -131,20 +131,22 @@ def vodsearch(categories, countries, years, keyword):
 
 @plugin.route('/duboku.ru')
 def dubokuru():
-    plugin.addDirectoryItems([(plugin.getSerializedUrlFor('/duboku.ru/vod/2-----------.html', id=2), ListItem('连续剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/duboku.ru/vod/1-----------.html', id=1), ListItem('电影', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/duboku.ru/vod/3-----------.html', id=3), ListItem('综艺', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/duboku.ru/vod/4-----------.html', id=4), ListItem('动漫', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/duboku.ru/vod/20-----------.html', id=20), ListItem('港剧', iconImage='DefaultTVShows.png'), True)])
+    plugin.addDirectoryItems(
+        [(plugin.getSerializedUrlFor('/duboku.ru/vod/2-----------.html', id=2), ListItem(getLocalizedString(30002), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/duboku.ru/vod/1-----------.html', id=1), ListItem(getLocalizedString(30003), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/duboku.ru/vod/3-----------.html', id=3), ListItem(getLocalizedString(30004), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/duboku.ru/vod/4-----------.html', id=4), ListItem(getLocalizedString(30005), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/duboku.ru/vod/20-----------.html', id=20), ListItem(getLocalizedString(30019), iconImage='DefaultTVShows.png'), True)])
     plugin.endOfDirectory()
 
 
 @plugin.route('/www.duboku.tv')
 def wwwdubokutv():
-    plugin.addDirectoryItems([(plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/2-----------.html', id=2), ListItem('连续剧', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/3-----------.html', id=3), ListItem('综艺', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/4-----------.html', id=4), ListItem('动漫', iconImage='DefaultTVShows.png'), True),
-                              (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/20-----------.html', id=20), ListItem('港剧', iconImage='DefaultTVShows.png'), True)])
+    plugin.addDirectoryItems(
+        [(plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/2-----------.html', id=2), ListItem(getLocalizedString(30002), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/3-----------.html', id=3), ListItem(getLocalizedString(30004), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/4-----------.html', id=4), ListItem(getLocalizedString(30005), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/20-----------.html', id=20), ListItem(getLocalizedString(30019), iconImage='DefaultTVShows.png'), True)])
     plugin.endOfDirectory()
 
 
@@ -275,8 +277,6 @@ def vodshow_filter(id):
          getLocalizedString(30071): getLocalizedString(30014),
          getLocalizedString(30072): getLocalizedString(30073)})
 
-    print(items)
-
     if items:
         path = urljoin(plugin.path, '{}-{}-{}-{}-{}-{}------{}.html'.format(id, items['地区'], items['排序'], items['剧情'], items['语言'], items['字母'], items['年份']))
         RecentFilter.create(path=path, title='无标题')
@@ -295,7 +295,7 @@ def vodshow():
         items.append((plugin.getSerializedUrlFor(item.path), item, True))
 
     for path, label in pages:
-        item = ListItem(label, iconImage='DefaultFolderBack.png' if label == '上一页' else '')
+        item = ListItem(getLocalizedString(30007), iconImage='DefaultFolderBack.png') if label == '上一页' else ListItem(getLocalizedString(30008))
         item.setProperty('SpecialSort', 'bottom')
         items.append((plugin.getUrlFor(path), item, True))
 
@@ -344,7 +344,7 @@ def vodplay():
         RecentDrama.create(path=path)
         item.setPath(url)
     else:
-        Dialog().notification('找不到视频', '')
+        Dialog().notification(getLocalizedString(30012), '')
 
     plugin.setResolvedUrl(bool(url), item)
 

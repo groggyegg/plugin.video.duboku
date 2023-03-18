@@ -54,7 +54,7 @@ msgid "Video Not Found"
 msgstr ""
 
 msgctxt "#30013"
-msgid "Drama Type"
+msgid "Type"
 msgstr ""
 
 msgctxt "#30014"
@@ -519,4 +519,16 @@ msgstr ""
 
 msgctxt "#30130"
 msgid "Skit"
+msgstr ""
+
+msgctxt "#30131"
+msgid "Recently Searched"
+msgstr ""
+
+msgctxt "#30132"
+msgid "Rename"
+msgstr ""
+
+msgctxt "#30133"
+msgid "Untitled"
 msgstr ""

@@ -54,7 +54,7 @@ msgid "Video Not Found"
 msgstr "找不到视频"
 
 msgctxt "#30013"
-msgid "Drama Type"
+msgid "Type"
 msgstr "类型"
 
 msgctxt "#30014"
@@ -520,3 +520,15 @@ msgstr "筛选"
 msgctxt "#30130"
 msgid "Skit"
 msgstr "短剧"
+
+msgctxt "#30131"
+msgid "Recently Searched"
+msgstr "最近搜索过"
+
+msgctxt "#30132"
+msgid "Rename"
+msgstr "重新命名"
+
+msgctxt "#30133"
+msgid "Untitled"
+msgstr "无标题"
