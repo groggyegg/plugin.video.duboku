@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 
 msgctxt "#30000"
-msgid "Search"
-msgstr "搜索"
+msgid "Search Database"
+msgstr "搜索数据库"
 
 msgctxt "#30001"
 msgid "Recently Watched"
@@ -418,7 +418,7 @@ msgid "Documentary"
 msgstr "纪实"
 
 msgctxt "#30105"
-msgid "Quyi"
+msgid "Melody Art"
 msgstr "曲艺"
 
 msgctxt "#30106"
@@ -466,7 +466,7 @@ msgid "Funny"
 msgstr "搞笑"
 
 msgctxt "#30117"
-msgid "Lolita"
+msgid "Loli"
 msgstr "萝莉"
 
 msgctxt "#30118"
@@ -520,7 +520,3 @@ msgstr "筛选"
 msgctxt "#30130"
 msgid "Skit"
 msgstr "短剧"
-
-msgctxt "#30131"
-msgid "BL"
-msgstr "BL"
