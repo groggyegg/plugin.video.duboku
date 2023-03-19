@@ -100,8 +100,8 @@ def recently_searched_delete(delete):
 @plugin.route('/vodsearch')
 def vodsearch_keyboard():
     keyword, items = Dialog().multiselecttabsearch(getLocalizedString(30000), {
-        (getLocalizedString(30013), '类型'): sorted(Drama.gettranslation(drama.category) for drama in Drama.select(Drama.category).distinct()),
-        (getLocalizedString(30042), '地区'): sorted({country for drama in Drama.select(Drama.country).distinct() for country in Drama.gettranslation(drama.country)}),
+        (getLocalizedString(30013), '类型'): sorted((getLocalizedString(drama.category), drama.category) for drama in Drama.select(Drama.category).distinct()),
+        (getLocalizedString(30042), '地区'): sorted({(getLocalizedString(country), country) for drama in Drama.select(Drama.country).distinct() for country in drama.country}),
         (getLocalizedString(30057), '年份'): sorted((str(drama.year) for drama in Drama.select(Drama.year).distinct()), reverse=True)})
 
     if keyword is not None:
@@ -114,7 +114,7 @@ def vodsearch(categories, countries, years, keyword):
     expression = ((Drama.path % keyword) | (Drama.title % keyword) | (Drama.plot % keyword))
 
     if categories:
-        expression &= Drama.category % ('*{}*'.format('*'.join('"{}"'.format(category) for category in categories)))
+        expression &= Drama.category << categories
 
     if countries:
         expression &= Drama.country % ('*{}*'.format('*'.join('"{}"'.format(country) for country in countries)))
@@ -207,7 +207,7 @@ def vodshow_filter(id):
             (getLocalizedString(30124), '亲子'),
             (getLocalizedString(30125), '益智'),
             (getLocalizedString(30126), '励志'),
-            (getLocalizedString(30127), '其他')],
+            (getLocalizedString(30112), '其他')],
             (getLocalizedString(30042), '地区'): [
                 (getLocalizedString(30014), ''),
                 (getLocalizedString(30043), '内地'),
@@ -222,7 +222,7 @@ def vodshow_filter(id):
                 (getLocalizedString(30054), '日本'),
                 (getLocalizedString(30055), '荷兰'),
                 (getLocalizedString(30128), '国产'),
-                (getLocalizedString(30127), '其他')],
+                (getLocalizedString(30112), '其他')],
             (getLocalizedString(30057), '年份'): [
                 (getLocalizedString(30014), ''), '2023', '2022', '2021', '2020', '2019', '2018', '2017'],
             (getLocalizedString(30058), '语言'): [
@@ -279,7 +279,7 @@ def vodshow_filter(id):
 
     if items:
         path = urljoin(plugin.path, '{}-{}-{}-{}-{}-{}------{}.html'.format(id, items['地区'], items['排序'], items['剧情'], items['语言'], items['字母'], items['年份']))
-        RecentFilter.create(path=path, title='无标题')
+        RecentFilter.create(path=path, title=getLocalizedString(30133))
         plugin.redirect(path)
 
 

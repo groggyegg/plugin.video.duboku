@@ -25,20 +25,12 @@ msgctxt "#30005"
 msgid "Anime"
 msgstr ""
 
-msgctxt "#30006"
-msgid "First"
-msgstr ""
-
 msgctxt "#30007"
 msgid "Previous"
 msgstr ""
 
 msgctxt "#30008"
 msgid "Next"
-msgstr ""
-
-msgctxt "#30009"
-msgid "Last"
 msgstr ""
 
 msgctxt "#30010"
@@ -54,7 +46,7 @@ msgid "Video Not Found"
 msgstr ""
 
 msgctxt "#30013"
-msgid "Type"
+msgid "Category"
 msgstr ""
 
 msgctxt "#30014"
@@ -505,12 +497,8 @@ msgctxt "#30126"
 msgid "Inspirational"
 msgstr ""
 
-msgctxt "#30127"
-msgid "Other"
-msgstr ""
-
 msgctxt "#30128"
-msgid "China"
+msgid "Domestic"
 msgstr ""
 
 msgctxt "#30129"
@@ -531,4 +519,32 @@ msgstr ""
 
 msgctxt "#30133"
 msgid "Untitled"
+msgstr ""
+
+msgctxt "#30134"
+msgid "Drama"
+msgstr ""
+
+msgctxt "#30135"
+msgid "Horror Movie"
+msgstr ""
+
+msgctxt "#30136"
+msgid "Comedy Movie"
+msgstr ""
+
+msgctxt "#30137"
+msgid "War Movie"
+msgstr ""
+
+msgctxt "#30138"
+msgid "Action Movie"
+msgstr ""
+
+msgctxt "#30139"
+msgid "Romance Movie"
+msgstr ""
+
+msgctxt "#30140"
+msgid "Science Fiction Movie"
 msgstr ""

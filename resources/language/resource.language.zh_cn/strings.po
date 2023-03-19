@@ -25,10 +25,6 @@ msgctxt "#30005"
 msgid "Anime"
 msgstr "动漫"
 
-msgctxt "#30006"
-msgid "First"
-msgstr "首页"
-
 msgctxt "#30007"
 msgid "Previous"
 msgstr "上一页"
@@ -36,10 +32,6 @@ msgstr "上一页"
 msgctxt "#30008"
 msgid "Next"
 msgstr "下一页"
-
-msgctxt "#30009"
-msgid "Last"
-msgstr "尾页"
 
 msgctxt "#30010"
 msgid "Remove"
@@ -54,7 +46,7 @@ msgid "Video Not Found"
 msgstr "找不到视频"
 
 msgctxt "#30013"
-msgid "Type"
+msgid "Category"
 msgstr "类型"
 
 msgctxt "#30014"
@@ -505,12 +497,8 @@ msgctxt "#30126"
 msgid "Inspirational"
 msgstr "励志"
 
-msgctxt "#30127"
-msgid "Other"
-msgstr "其他"
-
 msgctxt "#30128"
-msgid "China"
+msgid "Domestic"
 msgstr "国产"
 
 msgctxt "#30129"
@@ -532,3 +520,31 @@ msgstr "重新命名"
 msgctxt "#30133"
 msgid "Untitled"
 msgstr "无标题"
+
+msgctxt "#30134"
+msgid "Drama"
+msgstr "剧情片"
+
+msgctxt "#30135"
+msgid "Horror Movie"
+msgstr "恐怖片"
+
+msgctxt "#30136"
+msgid "Comedy Movie"
+msgstr "喜剧片"
+
+msgctxt "#30137"
+msgid "War Movie"
+msgstr "战争片"
+
+msgctxt "#30138"
+msgid "Action Movie"
+msgstr "动作片"
+
+msgctxt "#30139"
+msgid "Romance Movie"
+msgstr "爱情片"
+
+msgctxt "#30140"
+msgid "Science Fiction Movie"
+msgstr "科幻片"

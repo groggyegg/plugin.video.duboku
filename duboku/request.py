@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from re import compile, match, search, split
+from re import compile, match, search
 
 from bs4 import BeautifulSoup, SoupStrainer
 from requests import Session
@@ -45,8 +45,8 @@ class Request(object):
         raise Exception()
 
     @classmethod
-    def post(cls, path, **params):
-        response = cls.session.post('https:/{}'.format(path), params=params)
+    def post(cls, url, **params):
+        response = cls.session.post(url, params=params)
 
         if response.status_code == 200:
             return
@@ -93,11 +93,47 @@ class Request(object):
                 'poster': cls.urlunsplit(netloc, doc.find('img').attrs['data-original']),
                 'title': {'zh': doc.find('h1').text},
                 'plot': {'zh': doc.find('span', {'class': 'data'}).text.replace('　', '')},
-                'category': {'zh': search('分类：(.+)', doc.find('p', {'class': 'data'}).text).group(1)},
-                'country': {'zh': sorted(filter(None, map(str.strip, split(',|/|\u3001', search('地区：(.+)', doc.find('p', {'class': 'data'}).text).group(1)))))},
-                'cast': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='主演：').parent.text.lstrip('主演：'))))},
-                'director': {'zh': sorted(filter(None, split(',|\xa0', doc.find('span', text='导演：').parent.text.lstrip('导演：'))))},
+                'category': cls.category(search('分类：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
+                'country': cls.country(search('地区：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
                 'year': int(search('年份：(.+)', doc.find('p', {'class': 'data'}).text).group(1).replace('未知', '0'))}
+
+    @staticmethod
+    def category(category):
+        return {'日韩剧': 30016,
+                '台泰剧': 30018,
+                '陆剧': 30015,
+                '港剧': 30019,
+                '短剧': 30130,
+                '英美剧': 30017,
+                '综艺': 30004,
+                '动漫': 30005,
+                '连续剧': 30002,
+                '剧情片': 30134,
+                '恐怖片': 30135,
+                '喜剧片': 30136,
+                '战争片': 30137,
+                '动作片': 30138,
+                '爱情片': 30139,
+                '科幻片': 30140,
+                '电影': 30003}.get(category, 30112)
+
+    @staticmethod
+    def country(countries):
+        translate = {'其他': 30112,
+                     '内地': 30043,
+                     '台湾': 30046,
+                     '国产': 30128,
+                     '巴西': 30049,
+                     '日本': 30054,
+                     '法国': 30053,
+                     '泰国': 30051,
+                     '美国': 30047,
+                     '英国': 30048,
+                     '荷兰': 30055,
+                     '韩国': 30044,
+                     '香港': 30045}
+        countries = {id for country, id in translate.items() if country in countries}
+        return sorted(countries) if countries else [30112]
 
     @classmethod
     def voddetail_playlist(cls, path):

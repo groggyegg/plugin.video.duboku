@@ -27,7 +27,7 @@ from os import makedirs
 from os.path import exists, join
 
 from peewee import CharField, SqliteDatabase, Model, SQL, SmallIntegerField, DateTimeField
-from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLanguage
+from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLanguage, getLocalizedString
 
 if __name__ == '__main__':
     from xbmcgui import ListItem
@@ -82,14 +82,14 @@ class InternalDatabase(object):
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
-        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 39)),
+        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 40)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 351)),
-                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 410)),
-                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 44)),
-                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 75))]:
-            for show in shows:
+                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 360)),
+                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 415)),
+                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 45)),
+                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 77))]:
+            for show, _ in shows:
                 for path in show:
                     if path not in paths:
                         paths.add(path)
@@ -116,10 +116,8 @@ class Drama(InternalModel, ListItem):
     poster = CharField()
     title = JSONField()
     plot = JSONField()
-    category = JSONField()
+    category = SmallIntegerField()
     country = JSONField()
-    cast = JSONField()
-    director = JSONField()
     year = SmallIntegerField()
 
     def __new__(cls, *args, **kwargs):
@@ -135,8 +133,26 @@ class Drama(InternalModel, ListItem):
                      'landscape': kwargs['poster'],
                      'poster': kwargs['poster'],
                      'thumb': kwargs['poster']} if 'poster' in kwargs else {})
-        self.setInfo('video', {label: kwargs['year'] if label == 'year' else self.gettranslation(kwargs[label])
-                               for label in ('title', 'plot', 'country', 'status', 'genre', 'year') if label in kwargs})
+        self.setInfo('video', dict(self.video(kwargs)))
+
+    @staticmethod
+    def video(kwargs):
+        for label in ('title', 'plot', 'category', 'country', 'year'):
+            if label not in kwargs:
+                continue
+
+            value = kwargs[label]
+
+            if label == 'title':
+                yield label, Drama.gettranslation(value)
+            elif label == 'plot':
+                yield label, Drama.gettranslation(value)
+            elif label == 'category':
+                yield label, getLocalizedString(value)
+            elif label == 'country':
+                yield label, list(map(getLocalizedString, value))
+            elif label == 'year':
+                yield label, value
 
     @staticmethod
     def gettranslation(dictionary):
