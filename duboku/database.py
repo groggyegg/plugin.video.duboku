@@ -100,6 +100,18 @@ class InternalDatabase(object):
 
         cls.connection.commit()
 
+    @classmethod
+    def translate(cls):
+        from deep_translator import GoogleTranslator
+
+        translator = GoogleTranslator(source='auto', target='en')
+
+        for drama in Drama.select():
+            if 'en' not in drama.title:
+                drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<title>{}</title>'.format(drama.title['zh']))[7:-8]
+                drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
+                drama.save()
+
 
 class ExternalModel(Model):
     class Meta:
@@ -182,5 +194,6 @@ if __name__ == '__main__':
     try:
         InternalDatabase.connect()
         InternalDatabase.create()
+        InternalDatabase.translate()
     finally:
         InternalDatabase.close()
