@@ -144,10 +144,10 @@ class Request(object):
     def voddetail_episode(cls, path, id):
         netloc = cls.netloc(path)
         doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('div', {'id': id}))
-        return [(cls.urljoin(netloc, a.attrs['href']), {'zh': a.text}) for a in doc.find_all('a')]
+        return [(cls.urljoin(netloc, a.attrs['href']), a.text) for a in doc.find_all('a')]
 
     @classmethod
     def vodplay(cls, path):
         netloc = cls.netloc(path)
         doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('h2'))
-        return cls.urljoin(netloc, doc.find('a').attrs['href']), {'zh': doc.text.replace('\n', ' ').strip()}
+        return cls.urljoin(netloc, doc.find('a').attrs['href']), ' '.join(doc.text.split())

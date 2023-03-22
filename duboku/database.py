@@ -82,13 +82,13 @@ class InternalDatabase(object):
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
-        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 5)),
+        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 40)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 5))]:
+                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 40)),
+                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 40)),
+                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 40)),
+                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 40))]:
             for show, _ in shows:
                 for path in show:
                     if path not in paths:
@@ -133,19 +133,8 @@ class Drama(InternalModel, ListItem):
                      'landscape': kwargs['poster'],
                      'poster': kwargs['poster'],
                      'thumb': kwargs['poster']} if 'poster' in kwargs else {})
-        self.setInfo('video', dict(self.video(kwargs)))
-
-    @staticmethod
-    def video(kwargs):
-        for label in kwargs:
-            if label == 'title':
-                yield label, kwargs[label]
-            elif label == 'plot':
-                yield label, kwargs[label]
-            elif label == 'country':
-                yield label, list(map(getLocalizedString, kwargs[label]))
-            elif label == 'year':
-                yield label, kwargs[label]
+        self.setInfo('video', {label: list(map(getLocalizedString, kwargs[label])) if label == 'country' else kwargs[label]
+                               for label in ('title', 'plot', 'country', 'year') if label in kwargs})
 
 
 class RecentDrama(ExternalModel):
