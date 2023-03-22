@@ -91,8 +91,8 @@ class Request(object):
 
         return {'path': path,
                 'poster': cls.urlunsplit(netloc, doc.find('img').attrs['data-original']),
-                'title': {'zh': doc.find('h1').text},
-                'plot': {'zh': ' '.join(doc.find('span', {'class': 'data'}).text.replace('&nbsp;', '').split())},
+                'title': doc.find('h1').text,
+                'plot': ' '.join(doc.find('span', {'class': 'data'}).text.replace('&nbsp;', '').split()),
                 'category': cls.category(search('分类：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
                 'country': cls.country(search('地区：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
                 'year': int(search('年份：(.+)', doc.find('p', {'class': 'data'}).text).group(1).replace('未知', '0'))}
@@ -144,10 +144,10 @@ class Request(object):
     def voddetail_episode(cls, path, id):
         netloc = cls.netloc(path)
         doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('div', {'id': id}))
-        return [(cls.urljoin(netloc, a.attrs['href']), {'zh': a.text}) for a in doc.find_all('a')]
+        return [(cls.urljoin(netloc, a.attrs['href']), a.text) for a in doc.find_all('a')]
 
     @classmethod
     def vodplay(cls, path):
         netloc = cls.netloc(path)
         doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('h2'))
-        return cls.urljoin(netloc, doc.find('a').attrs['href']), {'zh': doc.text.replace('\n', ' ').strip()}
+        return cls.urljoin(netloc, doc.find('a').attrs['href']), ' '.join(doc.text.split())

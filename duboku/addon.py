@@ -27,7 +27,7 @@ from json import dumps
 from resolveurl import resolve
 from xbmcext import Dialog, Keyboard, ListItem, Plugin, SortMethod, executebuiltin, getLocalizedString, urljoin
 
-from database import ExternalDatabase, InternalDatabase, Drama, RecentDrama, RecentFilter
+from database import Drama, ExternalDatabase, InternalDatabase, RecentDrama, RecentFilter
 from request import Request
 
 plugin = Plugin()
