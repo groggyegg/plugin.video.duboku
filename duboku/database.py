@@ -82,13 +82,13 @@ class InternalDatabase(object):
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
-        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 40)),
+        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 5)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
                       iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 360)),
-                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 415)),
-                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 45)),
-                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 77))]:
+                      iter(Request.vodshow('/duboku.ru/vod/2--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(Request.vodshow('/duboku.ru/vod/1--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(Request.vodshow('/duboku.ru/vod/3--------{}---.html'.format(page)) for page in range(1, 5)),
+                      iter(Request.vodshow('/duboku.ru/vod/4--------{}---.html'.format(page)) for page in range(1, 5))]:
             for show, _ in shows:
                 for path in show:
                     if path not in paths:
@@ -113,13 +113,14 @@ class InternalDatabase(object):
                 if 'en' not in drama.title:
                     drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<title>{}</title>'.format(drama.title['zh']))[7:-8]
                     drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
-                    drama.save()
             except ConnectionError:
                 pass
             except NotValidLength:
                 pass
             except RequestError:
                 pass
+            finally:
+                drama.save()
 
 
 class ExternalModel(Model):
@@ -202,7 +203,7 @@ class RecentFilter(ExternalModel, ListItem):
 if __name__ == '__main__':
     try:
         InternalDatabase.connect()
-        # InternalDatabase.create()
+        InternalDatabase.create()
         InternalDatabase.translate()
     finally:
         InternalDatabase.close()

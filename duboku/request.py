@@ -92,7 +92,7 @@ class Request(object):
         return {'path': path,
                 'poster': cls.urlunsplit(netloc, doc.find('img').attrs['data-original']),
                 'title': {'zh': doc.find('h1').text},
-                'plot': {'zh': doc.find('span', {'class': 'data'}).text.replace('　', '')},
+                'plot': {'zh': ' '.join(doc.find('span', {'class': 'data'}).text.replace('&nbsp;', '').split())},
                 'category': cls.category(search('分类：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
                 'country': cls.country(search('地区：(.+)', doc.find('p', {'class': 'data'}).text).group(1)),
                 'year': int(search('年份：(.+)', doc.find('p', {'class': 'data'}).text).group(1).replace('未知', '0'))}
