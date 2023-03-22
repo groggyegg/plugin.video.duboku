@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 
 msgctxt "#30000"
-msgid "Search"
-msgstr "搜索"
+msgid "Search Database"
+msgstr "搜索数据库"
 
 msgctxt "#30001"
 msgid "Recently Watched"
@@ -25,10 +25,6 @@ msgctxt "#30005"
 msgid "Anime"
 msgstr "动漫"
 
-msgctxt "#30006"
-msgid "First"
-msgstr "首页"
-
 msgctxt "#30007"
 msgid "Previous"
 msgstr "上一页"
@@ -36,10 +32,6 @@ msgstr "上一页"
 msgctxt "#30008"
 msgid "Next"
 msgstr "下一页"
-
-msgctxt "#30009"
-msgid "Last"
-msgstr "尾页"
 
 msgctxt "#30010"
 msgid "Remove"
@@ -54,7 +46,7 @@ msgid "Video Not Found"
 msgstr "找不到视频"
 
 msgctxt "#30013"
-msgid "Drama Type"
+msgid "Category"
 msgstr "类型"
 
 msgctxt "#30014"
@@ -82,7 +74,7 @@ msgid "Hong Kong Drama"
 msgstr "港剧"
 
 msgctxt "#30020"
-msgid "Genre"
+msgid "Plot"
 msgstr "剧情"
 
 msgctxt "#30021"
@@ -298,16 +290,12 @@ msgid "Time"
 msgstr "时间"
 
 msgctxt "#30074"
-msgid "Popularity"
+msgid "Hits"
 msgstr "人气"
 
 msgctxt "#30075"
 msgid "Score"
 msgstr "评分"
-
-msgctxt "#30076"
-msgid "Story"
-msgstr "剧情"
 
 msgctxt "#30077"
 msgid "Horror"
@@ -422,7 +410,7 @@ msgid "Documentary"
 msgstr "纪实"
 
 msgctxt "#30105"
-msgid "Quyi"
+msgid "Melody Art"
 msgstr "曲艺"
 
 msgctxt "#30106"
@@ -470,7 +458,7 @@ msgid "Funny"
 msgstr "搞笑"
 
 msgctxt "#30117"
-msgid "Lolita"
+msgid "Loli"
 msgstr "萝莉"
 
 msgctxt "#30118"
@@ -509,14 +497,54 @@ msgctxt "#30126"
 msgid "Inspirational"
 msgstr "励志"
 
-msgctxt "#30127"
-msgid "Other"
-msgstr "其他"
-
 msgctxt "#30128"
-msgid "China"
+msgid "Domestic"
 msgstr "国产"
 
 msgctxt "#30129"
 msgid "Filter"
 msgstr "筛选"
+
+msgctxt "#30130"
+msgid "Skit"
+msgstr "短剧"
+
+msgctxt "#30131"
+msgid "Recently Searched"
+msgstr "最近搜索过"
+
+msgctxt "#30132"
+msgid "Rename"
+msgstr "重新命名"
+
+msgctxt "#30133"
+msgid "Untitled"
+msgstr "无标题"
+
+msgctxt "#30134"
+msgid "Drama"
+msgstr "剧情片"
+
+msgctxt "#30135"
+msgid "Horror Movie"
+msgstr "恐怖片"
+
+msgctxt "#30136"
+msgid "Comedy Movie"
+msgstr "喜剧片"
+
+msgctxt "#30137"
+msgid "War Movie"
+msgstr "战争片"
+
+msgctxt "#30138"
+msgid "Action Movie"
+msgstr "动作片"
+
+msgctxt "#30139"
+msgid "Romance Movie"
+msgstr "爱情片"
+
+msgctxt "#30140"
+msgid "Science Fiction Movie"
+msgstr "科幻片"
