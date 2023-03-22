@@ -111,16 +111,15 @@ class InternalDatabase(object):
         for drama in Drama.select():
             try:
                 if 'en' not in drama.title:
-                    drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<title>{}</title>'.format(drama.title['zh']))[7:-8]
+                    drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<h1>{}</h1>'.format(drama.title['zh']))[4:-5]
                     drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
+                    drama.save()
             except ConnectionError:
                 pass
             except NotValidLength:
                 pass
             except RequestError:
                 pass
-            finally:
-                drama.save()
 
 
 class ExternalModel(Model):

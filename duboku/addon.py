@@ -117,7 +117,7 @@ def vodsearch(categories, countries, years, keyword):
         expression &= Drama.category << categories
 
     if countries:
-        expression &= Drama.country % ('*{}*'.format('*'.join('"{}"'.format(country) for country in countries)))
+        expression &= Drama.country % ('*{}*'.format('*'.join(str(country) for country in countries)))
 
     if years:
         expression &= Drama.year << years
