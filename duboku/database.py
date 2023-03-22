@@ -103,14 +103,23 @@ class InternalDatabase(object):
     @classmethod
     def translate(cls):
         from deep_translator import GoogleTranslator
+        from deep_translator.exceptions import NotValidLength, RequestError
+        from requests import ConnectionError
 
         translator = GoogleTranslator(source='auto', target='en')
 
         for drama in Drama.select():
-            if 'en' not in drama.title:
-                drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<title>{}</title>'.format(drama.title['zh']))[7:-8]
-                drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
-                drama.save()
+            try:
+                if 'en' not in drama.title:
+                    drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<title>{}</title>'.format(drama.title['zh']))[7:-8]
+                    drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
+                    drama.save()
+            except ConnectionError:
+                pass
+            except NotValidLength:
+                pass
+            except RequestError:
+                pass
 
 
 class ExternalModel(Model):
@@ -193,7 +202,7 @@ class RecentFilter(ExternalModel, ListItem):
 if __name__ == '__main__':
     try:
         InternalDatabase.connect()
-        InternalDatabase.create()
+        # InternalDatabase.create()
         InternalDatabase.translate()
     finally:
         InternalDatabase.close()
