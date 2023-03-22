@@ -26,8 +26,10 @@ from json import dumps, loads
 from os import makedirs
 from os.path import exists, join
 
-from peewee import CharField, SqliteDatabase, Model, SQL, SmallIntegerField, DateTimeField
-from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLanguage, getLocalizedString
+from peewee import CharField, DateTimeField, Model, SmallIntegerField, SQL, SqliteDatabase
+from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLocalizedString
+
+from request import Request
 
 if __name__ == '__main__':
     from xbmcgui import ListItem
@@ -77,8 +79,6 @@ class InternalDatabase(object):
 
     @classmethod
     def create(cls):
-        from request import Request
-
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
@@ -100,27 +100,6 @@ class InternalDatabase(object):
 
         cls.connection.commit()
 
-    @classmethod
-    def translate(cls):
-        from deep_translator import GoogleTranslator
-        from deep_translator.exceptions import NotValidLength, RequestError
-        from requests import ConnectionError
-
-        translator = GoogleTranslator(source='auto', target='en')
-
-        for drama in Drama.select():
-            try:
-                if 'en' not in drama.title:
-                    drama.title['en'] = drama.title['zh'] if drama.title['zh'].isdigit() else translator.translate('<h1>{}</h1>'.format(drama.title['zh']))[4:-5]
-                    drama.plot['en'] = drama.plot['zh'] if drama.plot['zh'].isdigit() else translator.translate(drama.plot['zh'])
-                    drama.save()
-            except ConnectionError:
-                pass
-            except NotValidLength:
-                pass
-            except RequestError:
-                pass
-
 
 class ExternalModel(Model):
     class Meta:
@@ -135,8 +114,8 @@ class InternalModel(Model):
 class Drama(InternalModel, ListItem):
     path = CharField(primary_key=True, constraints=[SQL('ON CONFLICT REPLACE')])
     poster = CharField()
-    title = JSONField()
-    plot = JSONField()
+    title = CharField()
+    plot = CharField()
     category = SmallIntegerField()
     country = JSONField()
     year = SmallIntegerField()
@@ -146,7 +125,7 @@ class Drama(InternalModel, ListItem):
 
     def __init__(self, *args, **kwargs):
         super(Drama, self).__init__(*args, **kwargs)
-        self.setLabel(self.gettranslation(kwargs['title']) if 'title' in kwargs else '')
+        self.setLabel(kwargs['title'] if 'title' in kwargs else '')
         self.setArt({'banner': kwargs['poster'],
                      'clearart': kwargs['poster'],
                      'fanart': kwargs['poster'],
@@ -158,26 +137,15 @@ class Drama(InternalModel, ListItem):
 
     @staticmethod
     def video(kwargs):
-        for label in ('title', 'plot', 'category', 'country', 'year'):
-            if label not in kwargs:
-                continue
-
-            value = kwargs[label]
-
+        for label in kwargs:
             if label == 'title':
-                yield label, Drama.gettranslation(value)
+                yield label, kwargs[label]
             elif label == 'plot':
-                yield label, Drama.gettranslation(value)
-            elif label == 'category':
-                yield label, getLocalizedString(value)
+                yield label, kwargs[label]
             elif label == 'country':
-                yield label, list(map(getLocalizedString, value))
+                yield label, list(map(getLocalizedString, kwargs[label]))
             elif label == 'year':
-                yield label, value
-
-    @staticmethod
-    def gettranslation(dictionary):
-        return dictionary.get(getLanguage(), dictionary['zh'])
+                yield label, kwargs[label]
 
 
 class RecentDrama(ExternalModel):
@@ -203,6 +171,5 @@ if __name__ == '__main__':
     try:
         InternalDatabase.connect()
         InternalDatabase.create()
-        InternalDatabase.translate()
     finally:
         InternalDatabase.close()
