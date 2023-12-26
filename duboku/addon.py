@@ -39,8 +39,7 @@ def home():
         (plugin.getUrlFor('/vodsearch'), ListItem(getLocalizedString(30000), iconImage='DefaultAddonsSearch.png'), True),
         (plugin.getUrlFor('/recently-watched'), ListItem(getLocalizedString(30001), iconImage='DefaultTags.png'), True),
         (plugin.getUrlFor('/recently-searched'), ListItem(getLocalizedString(30131), iconImage='DefaultTags.png'), True),
-        (plugin.getUrlFor('/www.duboku.tv'), ListItem('www.duboku.tv', iconImage='DefaultTVShows.png'), True),
-        (plugin.getUrlFor('/duboku.ru'), ListItem('duboku.ru', iconImage='DefaultTVShows.png'), True)])
+        (plugin.getUrlFor('/www.duboku.tv'), ListItem('www.duboku.tv', iconImage='DefaultTVShows.png'), True)])
     plugin.endOfDirectory()
 
 
@@ -144,6 +143,7 @@ def dubokuru():
 def wwwdubokutv():
     plugin.addDirectoryItems(
         [(plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/2-----------.html', id=2), ListItem(getLocalizedString(30002), iconImage='DefaultTVShows.png'), True),
+         (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/1-----------.html', id=1), ListItem(getLocalizedString(30003), iconImage='DefaultTVShows.png'), True),
          (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/3-----------.html', id=3), ListItem(getLocalizedString(30004), iconImage='DefaultTVShows.png'), True),
          (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/4-----------.html', id=4), ListItem(getLocalizedString(30005), iconImage='DefaultTVShows.png'), True),
          (plugin.getSerializedUrlFor('/www.duboku.tv/vodshow/20-----------.html', id=20), ListItem(getLocalizedString(30019), iconImage='DefaultTVShows.png'), True)])
