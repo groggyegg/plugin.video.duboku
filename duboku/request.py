@@ -31,13 +31,14 @@ from xbmcext.pymaybe import maybe
 
 
 class Request(object):
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'}
     session = Session()
 
     @classmethod
     def get(cls, path):
         url = 'https:/{}'.format(path)
         Log.info('[plugin.video.duboku] GET "{}"'.format(url))
-        response = cls.session.get(url)
+        response = cls.session.get(url, headers=cls.headers)
 
         if response.status_code == 200:
             return response.text
@@ -46,7 +47,7 @@ class Request(object):
 
     @classmethod
     def post(cls, url, **params):
-        response = cls.session.post(url, params=params)
+        response = cls.session.post(url, headers=cls.headers, params=params)
 
         if response.status_code == 200:
             return
@@ -75,6 +76,12 @@ class Request(object):
         selected = maybe(doc.find('a', {'class': 'btn btn-warm'})).attrs['href']
         pages = [(cls.urljoin(netloc, a.attrs['href']), a.text) for a in doc.find_all('a', text=['上一页', '下一页']) if a.attrs['href'] != selected]
         return shows, pages
+
+    @classmethod
+    def vodshow_pagination(cls, path):
+        doc = BeautifulSoup(cls.get(path), 'html.parser', parse_only=SoupStrainer('ul', {'class': 'myui-page text-center clearfix'}))
+        first, last = doc.find('li', {'class': 'visible-xs'}).text.split('/')
+        return int(first), int(last) + 1
 
     @classmethod
     def voddetail(cls, path):

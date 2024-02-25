@@ -82,10 +82,10 @@ class InternalDatabase(object):
         cls.connection.create_tables([Drama])
         paths = {drama.path for drama in Drama.select()}
 
-        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(1, 51)),
-                      iter(Request.vodshow('/www.duboku.tv/vodshow/1--------{}---.html'.format(page)) for page in range(1, 2)),
-                      iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(1, 5)),
-                      iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(1, 6))]:
+        for shows in [iter(Request.vodshow('/www.duboku.tv/vodshow/2--------{}---.html'.format(page)) for page in range(*Request.vodshow_pagination('/www.duboku.tv/vodshow/2-----------.html'))),
+                      iter(Request.vodshow('/www.duboku.tv/vodshow/1--------{}---.html'.format(page)) for page in range(*Request.vodshow_pagination('/www.duboku.tv/vodshow/1-----------.html'))),
+                      iter(Request.vodshow('/www.duboku.tv/vodshow/3--------{}---.html'.format(page)) for page in range(*Request.vodshow_pagination('/www.duboku.tv/vodshow/3-----------.html'))),
+                      iter(Request.vodshow('/www.duboku.tv/vodshow/4--------{}---.html'.format(page)) for page in range(*Request.vodshow_pagination('/www.duboku.tv/vodshow/4-----------.html')))]:
             for show, _ in shows:
                 for path in show:
                     if path not in paths:
