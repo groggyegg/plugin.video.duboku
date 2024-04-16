@@ -548,3 +548,7 @@ msgstr ""
 msgctxt "#30140"
 msgid "Science Fiction Movie"
 msgstr ""
+
+msgctxt "#30141"
+msgid "Couldn't Connect To Domain"
+msgstr ""

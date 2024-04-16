@@ -26,7 +26,8 @@ from re import compile, match, search
 
 from bs4 import BeautifulSoup, SoupStrainer
 from requests import Session
-from xbmcext import Log, urlparse
+from requests.exceptions import ConnectionError
+from xbmcext import getLocalizedString, Log, urlparse
 from xbmcext.pymaybe import maybe
 
 
@@ -43,7 +44,7 @@ class Request(object):
         if response.status_code == 200:
             return response.text
 
-        raise Exception()
+        raise ConnectionError(getLocalizedString(30141))
 
     @classmethod
     def post(cls, url, **params):
