@@ -548,3 +548,7 @@ msgstr "爱情片"
 msgctxt "#30140"
 msgid "Science Fiction Movie"
 msgstr "科幻片"
+
+msgctxt "#30141"
+msgid "Couldn't Connect To Domain"
+msgstr "无法连接到域"

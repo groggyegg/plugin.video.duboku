@@ -24,6 +24,7 @@ SOFTWARE.
 
 from json import dumps
 
+from requests.exceptions import ConnectionError
 from resolveurl import resolve
 from xbmcext import Dialog, Keyboard, ListItem, Plugin, SortMethod, executebuiltin, getLocalizedString, urljoin
 
@@ -355,6 +356,8 @@ if __name__ == '__main__':
         ExternalDatabase.create()
         InternalDatabase.connect()
         plugin()
+    except ConnectionError as e:
+        Dialog().notification(str(e), '')
     finally:
         ExternalDatabase.close()
         InternalDatabase.close()
