@@ -122,14 +122,12 @@ class Drama(InternalModel, ListItem):
 
     def __init__(self, *args, **kwargs):
         super(Drama, self).__init__(*args, **kwargs)
+
+        if 'poster' in kwargs:
+            poster = kwargs['poster'] + '|Referer=https%3A%2F%2Fwww.duboku.tv%2F'
+            self.setArt({label: poster for label in ('banner', 'clearart', 'fanart', 'icon', 'landscape', 'poster', 'thumb')})
+
         self.setLabel(kwargs['title'] if 'title' in kwargs else '')
-        self.setArt({'banner': kwargs['poster'],
-                     'clearart': kwargs['poster'],
-                     'fanart': kwargs['poster'],
-                     'icon': kwargs['poster'],
-                     'landscape': kwargs['poster'],
-                     'poster': kwargs['poster'],
-                     'thumb': kwargs['poster']} if 'poster' in kwargs else {})
         self.setInfo('video', {label: list(map(getLocalizedString, kwargs[label])) if label == 'country' else kwargs[label]
                                for label in ('title', 'plot', 'country', 'year') if label in kwargs})
 
