@@ -31,9 +31,6 @@ from xbmcext import ListItem, getAddonProfilePath, getAddonPath, getLocalizedStr
 
 from request import Request
 
-if __name__ == '__main__':
-    from xbmcgui import ListItem
-
 
 class JSONField(CharField):
     def db_value(self, value):

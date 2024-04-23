@@ -225,7 +225,15 @@ def vodshow_filter(id):
                 (getLocalizedString(30128), '国产'),
                 (getLocalizedString(30112), '其他')],
             (getLocalizedString(30057), '年份'): [
-                (getLocalizedString(30014), ''), '2023', '2022', '2021', '2020', '2019', '2018', '2017'],
+                (getLocalizedString(30014), ''),
+                '2024',
+                '2023',
+                '2022',
+                '2021',
+                '2020',
+                '2019',
+                '2018',
+                '2017'],
             (getLocalizedString(30058), '语言'): [
                 (getLocalizedString(30014), ''),
                 (getLocalizedString(30059), '国语'),
